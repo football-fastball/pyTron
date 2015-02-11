@@ -1,0 +1,1060 @@
+<?php
+/* the page is the same name as the .py page */
+
+
+// Description: Directories that use the internal routing of a web browser and allow to include from 
+//              anywhere within a domain name without having the exact path to the include file
+
+$subdirectory_of_domain_name = ''; /* begin with a forward slash, without ending slash ( subdirectory under document root of a domain name) 
+									* most cases this variable is set to ''
+									*/
+$auto_print_wwwlog_literal = True;
+
+// The following function determines from the root directory of the web site where the include files actually are.
+function magic_directories( $include ) { // include from your project folder root directory
+	global $subdirectory_of_domain_name;
+	return b2f(substr(__FILE__, 0, -strlen($_SERVER['SCRIPT_NAME'])) . $subdirectory_of_domain_name . '/' . $include);
+}
+
+// backslash to forward-slash
+function b2f($s) { return (str_replace('\\','/',$s)); } // optional on some OS environments, for platform independence
+
+
+// how it works:  As an example your project is in a folder named  fiction_books  on a root of a domain name
+//                Then        'fiction_books'      is the      subdirectory_of_domain_name
+//
+//                And your project contains a folder that you place your includes for css, js, etc.
+//                Therefore, an example is:                  'include_directory/file_to_include_to_your_project.php'
+
+
+
+// example, works,  the path to the helper_function.php is set relative to the project folder
+//include( magic_directories( 'include/helper_functions.php' ) );
+
+
+$done = false;
+
+$quick_development_mode = false   ; // puts all the files in the same folder
+                                    // i.e., this_page.php, this_page.py, this_page.css this_page.js simple_preprocessor.py (therefore compiled in same folder also)
+
+
+
+
+# libs, e.g., jquery that are included frequently in a project (a way to dynamic relative directories (term i coined) to domain name, (and even an offset directory)
+$css_folder_always   = ''         ;  // when empty string therefore not using
+$js_rs_folder_always = ''         ;  // ...
+
+$css_per_page_folder_using   = true; // when false, then its a file
+$js_rs_per_page_folder_using = true; // javascript rapydscript
+
+// when the two previous choices are false, then just a file in the following directories by the same name as the file
+$css_folder = 'py_css'            ;
+$js_fodler = 'py_js'              ;
+// folders will be same name as filename within /css  or /js
+// simply includes any css or js within those folders
+
+
+$compiled_folder = ''              ;  // MUST INCLUDE TRAILING backslash or forwardslash, or ('' or '.' for cwd)
+
+
+
+
+// simple_preprocessor.py options
+$str_bool_uni_value = 'False';
+
+
+function domain_name_endswith() {	  // or contains, domain_suffix, etc.    // or just argument to py code
+
+$ret1 = 'A';    // plan
+$ret2 = 'WIDE'; // B
+	if(isset($_SERVER['SERVER_NAME']) ) {
+		$s = $_SERVER['SERVER_NAME'];
+	//  :D  Lee
+		$s = right(raise($s), 2);
+		if ($s == 'US')
+			return $ret1;
+		else
+			return $ret2;
+	}
+return $ret1;
+}
+
+function not($s){return !$s;}
+function to_write($file, $s){ file_put_contents($file, $s); }
+function to_read($file) { return file_get_contents($file) ; }
+function contains ($needle, $haystack) { return strpos($haystack, $needle) !== false; }
+function php_string_slicing($start, $end, $s) { return 	substr ($s,$start,$end - $start); } // yet_to_be_added
+function underscore_to_space($s) { return str_replace(  '_' , ' ' , $s ); } // str_replace($old,$new,$s)
+function raise($s) { return strtoupper ($s); }
+function str_bool($s){ return ( ($s) ? 'True' : 'False'); };
+function without_file_extension($s) { return substr($s, 0, strrpos($s, ".")); } // without . and file extension
+function right($str, $length) {return substr($str, -$length);  }
+// perhaps $opentag = ''  , $closetag=''  within parenthesis  specifying arguments (otherwise argument order)
+function get_string_tag_to_tag($s, $opentag, $closetag=''){
+	
+	$opentag  = underscore_to_space($opentag );
+	$closetag = underscore_to_space($closetag);
+
+	$beginpos = strpos( $s, $opentag);
+	
+	if ($beginpos === false) {
+		echo "The string '$opentag' was not found in the string ";
+	} else {
+		//echo "The string '$opentag' was found in the string ";
+		//echo " and exists at position $beginpos";
+	}
+
+if ($closetag==''){
+	$end = strlen($s);				// to end of file
+}
+else{
+	$end = strpos($s, $closetag);
+}
+	
+	
+	if ($end === false) {
+		echo "The string '$closetag' was not found in the string";
+	} else {
+		//echo "The string '$closetag' was found in the string ";
+		//echo " and exists at position $end";
+	}
+	
+	$start = $beginpos + strlen($opentag) + 1;
+	$finish = $end; // same thing, though sometimes an offset 
+	return php_string_slicing($start, $finish , $s);
+}
+
+
+
+$var_file1=false;
+$var_file2=false;
+$var_file3=false;
+$md_comp_dir=false;
+
+for ($i = 1; $i <= 1; $i++)	// to mimic a function, can then use break, continue without need for global vars
+if (not($done) ) {
+
+	$s = to_read(__FILE__);
+
+	$t = get_string_tag_to_tag($s, 	'#_START_SOURCE_CODE_OF_PY_PAGE_OUTPUT_#', 
+									'#_END_SOURCE_CODE_OF_PY_PAGE_OUTPUT_#');
+
+           $base_name_without_extension = without_file_extension(basename(__FILE__));
+	$var = $base_name_without_extension . '.py';
+
+	if (not (file_exists($var))){  /* this_page_name.py file (front.py) */
+		$t = str_replace( 'PHP_OPEN_TAG_REPLACE', '<'.'?'.'php', $t);
+		$t = str_replace( 'PHP_CLOSE_TAG_REPLACE', '?'.'>', $t);
+		to_write($var, $t);
+		$var_file1= true;
+	}
+
+	$u = get_string_tag_to_tag($s, 	'#_START_PRE_PROCESSOR.PY_WRITE_OUTPUT_#',
+									'#_END_PRE_PROCESSOR.PY_WRITE_OUTPUT_#');
+									
+	$var = 'simple_preprocessor.py';
+	if (not (file_exists($var))){
+		to_write($var, $u);
+		$var_file2=true;
+	}
+
+	
+	$u = get_string_tag_to_tag($s, 	'#_START_SIMPLE_PREPROCESSOR_AUTO_PRINT_LITERAL.PY_WRITE_OUTPUT_#');
+									
+	$var = 'simple_preprocessor_auto_print_literal.py';
+	if (not (file_exists($var))){
+		to_write($var, $u);
+		$var_file3=true;
+	}	
+	
+	$var = $compiled_folder;
+	if (not ($var == '' ))    //do
+	if (not (is_dir ($var))){ // do
+	
+		if (mkdir($var))
+			$md_comp_dir=True;
+		else
+			break;
+	}
+
+	// $var   = (condition ?  when_true :  when_false);
+	$compiled_folder = ($compiled_folder == '.' ? '' : $compiled_folder); //otherwise a begins_with function
+
+	
+	// perhaps a check either way when source >= modtime $compiled !!!!!
+	
+	$source   = $base_name_without_extension . '.py';
+	$compiled = $base_name_without_extension . '_compiled.py';
+	
+	//check if compiled file exists
+	if (not (file_exists( $compiled_folder . $base_name_without_extension . '_compiled.py')))
+	{
+	
+		// if($quick_development_mode){ //compile in same directory  (statement seems to be the same however
+		
+			echo '(PYTHON COMPILING)';
+			
+// working on...
+
+			echo 'here it is';
+			
+echo passthru(	'python simple_preprocessor.py -TW "'.$source.'" "'.$compiled.'" "'.$str_bool_uni_value.'" 2>&1  && '.    
+				'python simple_preprocessor_auto_print_literal.py "'.$compiled.'" "'.str_bool($auto_print_wwwlog_literal).'"  2>&1  '.	   /* manually add r to print_wwwlog (if need to) */
+			 '');
+			
+
+						
+		// else //compile in possibly different directory
+		//$compiled = $compiled_folder . $compiled_folder;
+	}
+	
+	if($quick_development_mode){ // not checking folders, but still precompiling... therefore, precompile before this.
+		echo 'early exit using a mimic function';
+		$done=true;
+		break;
+	}
+	
+}
+
+
+if (not ($done)) //skips
+//the following statement, is a not  (they all must be true then can simply run, it is already compiled then
+// and files and folders of our mini content management system is done (via hybrid routing model i coined, aka, file based routing...)
+if(   $var_file1 && $var_file2 && $md_comp_dir ) {
+
+}
+
+//run it
+
+//echo '(ALREADY COMPILED)';
+
+echo passthru('python "'.$compiled. '" "' .domain_name_endswith().'"  2>&1 ');
+
+	
+
+//
+
+
+
+// compiled files to optionally be elsewhere
+?>
+
+<?php
+$msg = 'exit'; // change to '' to remove printing to screen
+die('exit');  // stops php from reading additional contents of this file
+
+
+
+// edit of your web page occurs in the file with the same name as this file .py instead of .php
+// directions:  the file that will contain your web site mentioned in the previous line will be created
+//              automatically when FIRST running this page
+?>
+
+### NOTE: DO NOT CHANGE THE TEXT ON THE NEXT LINE!!!!
+# START SOURCE CODE OF PY PAGE OUTPUT #
+
+import os
+import sys
+from subprocess import PIPE, Popen, STDOUT
+import time
+import ast
+
+same_file = False	# is True or False , gets value from PHP (global or make App class due to        # Note, 2015.02.02: same_file set to True not recommended
+                        # global variables frowned upon, i.e., not best practices)                   # because of the note comment explained in index.php
+                        # began to import from PHP, still a todo, at this time
+PRINTOUT = False	# for print statements used by print_test() to review variables, etc. for a form of browser console logging
+					# 2015.01.30 added feature to allow python quick tags to triple quoted strings for assignment operators
+					# triple quoted string can still be used, but not between <% and %> because they represent triple double quotes, and that would be
+					# triple double quotes within triple double quotes (quotes within TDQ need to be escaped with the backslash)
+
+print_literal = False 
+
+                  # utags will return the string with unicode type python quick tags ON as its initial value, by default.
+                  # for convenience, the utags is a string object that creates a version of the source code when JavaScript is off as a transition until browser native implementation
+class utags(str): # or unicode_show  ,  whichever is a more appropriate label
+
+	def unicode_markup(self, bool=True):
+		return self if bool else self.replace('<unicode>', '').replace('</unicode>','')
+
+def console_log_function():
+	return <%
+     /**
+     * Logs messages/variables/data to browser console from within php
+     * @param $name: message to be shown for optional data/vars
+     * @param $data: variable (scalar/mixed) arrays/objects, etc to be logged
+     * @param $jsEval: whether to apply JS eval() to arrays/objects
+     * @return none
+     * @author Sarfraz
+     */
+     function logConsole($name, $data = NULL, $jsEval = FALSE)
+     {
+          if (! $name) return false;
+ 
+          $isevaled = false;
+          $type = ($data || gettype($data)) ? 'Type: ' . gettype($data) : '';
+ 
+          if ($jsEval && (is_array($data) || is_object($data))) {
+               $data = 'eval(' . preg_replace( '#[\\a\\1\\2\\3\\4\\5\\6\\7\\8\\9\\b\\f\\v\\r\\n\\t\\0\\x0B]+#', '', json_encode($data)) . ')';
+               $isevaled = true;
+          }
+          else {
+               $data = json_encode($data);
+          }
+          # sanitalize
+		  $data = $data ? $data : '';
+          $search_array = array("#\\'#", '#\\"\\"#', "#\\'\\'#", "#\\n#", "#\\r\\n#");
+          $replace_array = array('"', '', '', '\\\\n', '\\\\n');
+          $data = preg_replace($search_array,  $replace_array, $data);
+          $data = ltrim(rtrim($data, '"'), '"');
+          $data = $isevaled ? $data : ($data[0] === "'") ? $data : "'" . $data . "'";
+$js = <<<JSCODE
+\n<script>
+     // fallback - to deal with IE (or browsers that don't have console)
+     if (! window.console) console = {};
+     console.log = console.log || function(name, data){};
+    // end of fallback
+	// I innovated a start and end tag for hexadecimal content (the tag is of course arbitrary, though seems to fit the purpose (apropos))
+	function not(s){return !s;}
+	function hex2asc(pStr) {
+		if (not( typeof pStr === 'string') )			// alert(typeof pStr);
+		return pStr;
+		var startHexTag = pStr.substr(0, 5);			// start tag to indicate hexadecimal content is <hex>
+		var endHexTag = pStr.substr(pStr.length - 6); 	// end tag to indicate hexadecimal content is </hex>
+		if ( not ( startHexTag === "<hex>" && endHexTag === "</hex>" ) )
+		return pStr;
+		var data = pStr.substring(5, pStr.length - 6 )
+        tempstr = '';
+        for (b = 0; b < data.length; b = b + 2) {
+            tempstr = tempstr + String.fromCharCode(parseInt(data.substr(b, 2), 16));
+        }
+        return tempstr;
+    }
+     console.log('$name');
+     console.log('------------------------------------------');
+     console.log('$type');
+     console.log(hex2asc($data));
+     console.log('\\\\n');
+</script>
+JSCODE;
+          echo $js;
+     } # end logConsole
+//echo( ' <br> {**{hello}**} <br>');	 
+//echo( '{**{howdy}**}');
+%>.format (  hello='hello world', howdy='very well thanks' )
+
+def rawstringify_outerquote(s):
+    for format in ["r'{}'", 'r"{}"', "r'''{}'''", 'r"""{}"""']:
+        rawstring = format.format(s)
+        try:
+            reparsed = ast.literal_eval(rawstring)
+            if reparsed == s:
+                return rawstring[1]
+        except SyntaxError:
+            pass
+    raise ValueError('rawstringify received an invalid raw string')
+	
+def mod_dt(file):
+	return time.strftime("%Y%m%d%H%M%S",time.localtime(os.path.getmtime(file)));
+	
+def to_write(file, s):
+	with open(file, 'w') as fp:
+		fp.write(s)					
+					
+def print_test(s):
+	global PRINTOUT
+	if (PRINTOUT):
+		print s
+		
+def exists(path):
+	return True if ( os.path.isfile(path) or os.path.isdir(path)) else False
+
+def file_exists(path):
+	return os.path.isfile(path)
+	
+def is_compiled(source, dest):
+
+	if ( not file_exists(dest) ): # exists def nice, file_exists works fine too
+		return False
+
+	if ( mod_dt(source) >= mod_dt(dest) ):
+		return False
+	else:
+		return True
+		
+def compile_include_quick_tags(file):
+	global same_file
+	
+	if(not same_file):
+		compiled = file[:-3] + '_compiled.py'
+	else:
+		compiled = file
+	
+	if ( is_compiled(file, compiled) ):
+		#print '(INCLUDE ALREADY COMPILED)'
+		return compiled
+	
+	print '(INCLUDE NOT compiled yet, therefore COMPILING)'
+	
+	os.system('"python.exe simple_preprocessor.py -TW '+file+' '+compiled+' whateverDNMfilterByoutputfunction 2>&1"')
+	
+	print_test( 'INCLUDING THIS FILE(' + compiled + ')' )
+	return compiled # run pre_processor on it, with file being the source and  it as the dest
+		
+	# any includes done here to evaluate one file format variable, Q. can I include in a def,function
+	
+	
+def include_quick_tags_file(source):
+	global same_file
+	
+	print_test( 'POINT #1 file is:('+ source + ')' )
+	f = os.path.abspath(compile_include_quick_tags(source)) # compiled variable
+	print_test( '<br>file to include('+f+')' )
+	
+		# initially the idea was to compile here with the following statement:
+		#execfile(compiled) # require fullpath, includes file   (though having a scope issue here)
+				
+	#if (same_file):
+		# need to postprocessor.py the file after compiling
+		# due to the way execfile currently works, cannot call from a def,function as I intend it to work (simply include)
+	
+	return f # hmm, how in -antastic is this, workaround needed by the receiver of this return when same file format is true
+
+
+def execfile_fix(file): # workaround, due to execfile not working (as i'd like it to work (as expected)) from within a def,function
+	global same_file
+	
+	if(same_file):
+		os.system('"python.exe simple_postprocessor.py -TW '+file+' 2>&1"');
+
+
+		
+# INCLUDES TO BE PLACED HERE
+
+file_to_include = 'include.py'
+# including this way due to execfile does not including a file within a def,function as I expected
+###############execfile(include_quick_tags_file(file_to_include))	# this functin used to include each python file with quick tags		 
+
+# commented out include file at this time !!
+# NOTE: include section of source code with two entries due to workaround needed for execfile def,function
+#execfile(include_quick_tags_file(file_to_include))
+#execfile_fix(file_to_include) # when same file format is used, post_procesor.py (not used when using different file format)
+                              # NOTE: fix does not need to be removed if using different file format (due to boolean check)
+                              # otherwise, workaround is to convert after output() def called from main, with list of include files to convert back
+
+
+def print_wwwlog(s, literal = True):    # prints to brower's console log
+	
+	if (literal):
+		quote = rawstringify_outerquote(s)   # these 5 statements will occur when we turn on the  print_literal option
+		if (quote == '"' ):                  # or    literal = True     
+			s = s.replace('\\"', '"')        #
+                                             # as of at this moment, it converts each print_wwwlog statement to
+		if (quote == "'" ):                  # raw string literal with a new and innovative  simple_preprocessor_auto_print_literal.py  step
+			s = s.replace("\\'", "'")        # the reason is to output messages to the brower console without escaping (actually its the most minimal escaping required)
+                                             # see the comment about "TWO SMALL CASES TO ESCAPE WITH RAW STRING LITERALS" down below
+											 
+	# not to encode to ascii, better to use raw strings 
+	#if (not esc_sequences_already):     # to get close to wysiwyg --   and perhaps innovative, Unicode tags proposed
+	#	s = 'Lee: ' + s.encode('ascii')  # just to write lines, used during programming, statement can be removed
+                                         # the way print_wwwlog() works is that it will either print ascii messages to the console or, you can escape characters, 
+                                         # that will give you the same result, that will have to be interpreted anyway at the web browser as unicode,
+                                         # perhaps put <unicode></unicode> and or <utf8></utf8> tags (and their uppercase forms) that I have arbitrarily innovated around utf8 strings to identify that.
+		s = s.encode('hex')              # though perhaps browser's would identify that, or not, otherwise comment tags could be put around the unicode tags just mentioned <-- --> and javscript would convert to the required unicode text characters
+		s = '<hex>'+s+'</hex>'           # if newlines actually needed, then there's use of html tags, e.g., <br> and so on... (perhaps even arbitrary tags for things like tabs <tabs> defined by css and so on...)
+		
+	code_init = <%
+$name1 = '%s';
+logConsole('$name1 var', $name1, true);
+%> % s
+	wwwout = code_init + "\n" + console_log_function()
+	print php(  wwwout  ) # to web
+					  					  
+def print_args(s, intro=''):
+	print_test( intro )
+	for item in s:
+		print_test( 'ARG:(' + item + ')' )
+		
+def create_superglobals(args):
+	global same_file
+	# idea to transfer superglobals from PHP here
+	
+               # experimental, just testing PHP called within Python
+def php(code): # shell execute PHP from Python (that is being called from php5_module in Apache), for fun...
+	p = Popen(['php'], stdout=PIPE, stdin=PIPE, stderr=STDOUT) # open process
+	o = p.communicate('PHP_OPEN_TAG_REPLACE '+ code +'\n PHP_CLOSE_TAG_REPLACE')[0]
+	try:
+		os.kill(p.pid, signal.SIGTERM)	# kill process
+	except:
+		pass
+	return o
+
+def top_content():
+    
+	print_wwwlog( '''I am at " the top " content''' ) # NOTE: better to use triple single quotes , best to put a space before and after a triple quoted string (though not necessary for triple SINGLE quotes)
+	                                                  # (the open and close quick tags (< % % > with no spaces) to denote a 
+                                                      # triple double quoted string ONLY for return and assignment statements at this time) 
+                                                      # due to a space needed before closing parenthesis 
+                                                      # when using triple DOUBLE quotes (no restriction with triple SINGLE quotes by you, the programmer)
+	# at this time, one or no spaces between open parenthesis and open quick tag (no resriction on the close python quick tag as far as spaces around it)
+	print_wwwlog ( <% example of new feature using quick tags between parenthesis %> )
+	return 'header'
+	
+# r''' '''  can be used anywhere 
+
+def mid_content():
+
+	print_wwwlog( <%    %>  )  # TWO SMALL CASES TO ESCAPE WITH RAW STRING LITERALS, a backslash before a single quote or double quote 
+          # (depending what are the outer quotes) and if the intent is to have a backslash at the end of a string, need two of them
+
+	return <%
+	
+{**{testing}**}
+
+%>.format( testing = 'hello world' )
+	
+def end_content():
+	return 'footer'
+	
+# in the case not transferring data from php using multiple domains, simply revert to a previous version, commit 
+def domain_name(s):   
+	if(s == 'A'):
+		return 'us'
+	elif(s == 'WIDE'):
+		return 'com'
+		
+def training_wheels_bit_slower_to_remove(s): # recommend: to remove this function for production code and edit code as required
+                                             # just chose an arbitrary tag to represent the python format variables, works nicely, for now
+	return s.replace('{', '{{').replace('}', '}}').replace('{{**{{', '{').replace('}}**}}', '}')
+
+# test example, don't forget to have php.exe and php5ts.dll in PATH
+width = 100
+height = 100	
+code = <%
+echo ('   """ + str(width) + """, """ + str(height) + """  ');
+%>
+
+# Note, any JavaScript or any other code that contains a curly brace 
+# must double the curly brace when using the python format function with the triple double-quoted string, 
+# but not in a JavaScript src file (regardless of using the format function or not).
+
+# It further verifies that the compiled Python-like RapydScript JavaScript will indeed run,
+# with the use of jQuery's .ready and .getScript that also verifies the JavaScript is syntactically correct.
+# If it is correct to the browser's JavaScript engine, the console.log will successfully print to the browser's console.
+
+
+def output(name):
+# With this New Feature: Open and Close Tags for this Python file 
+# (It allows syntax highlighting within the tags, and eases coding)
+# Note that the following opening tag, (less-than sign and percent sign) will be replaced by the simple_preprocessor.py
+# with this:  PRINT training_wheels_bit_slower_to_remove(""" (lowercase) NOTE: this exact comment line obviously does not run.
+	<%
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title></title>
+<script src="js/jquery-1.11.2.min.js"></script>
+<link rel="stylesheet" type="text/css" href="css/page_frame_{**{domain}**}.css" />
+<script src="first.js"></script>
+
+<script>
+$(document).ready(function() {
+	console.log('jquery 1.11.2 initialized');
+	console.log('app.js loading...  if capitalized done. statement does not appear next, or as the print line to the console, there is an error occurring');
+});
+
+jQuery.getScript("first.js", function() {
+	console.log('DONE.');
+});
+</script>
+
+</head>
+<body>
+
+<div id="container">
+
+<div id="top">{**{top_content}**}</div>
+
+<div id="mid">{**{mid_content}**}</div>
+
+<div id="end">{**{end_content}**}</div>
+
+</div>
+
+<br>
+
+</body>
+</html>
+
+	
+
+%>.format (   #  %:)>    # UNCOMMENT POINT *A* (uncomment the FIRST comment hash tag for the remove unicode operation   # the arbitrary find string is exactly this 20 characters long, quick workaround to subtract a parenthesis keyword operator # happy face keyword to rid a frown ( removes a close parenthesis ) (an arbitrary keyword created to remove one text character)
+	# variables used
+	top_content = top_content(),
+	mid_content = mid_content(),
+	end_content = end_content(),
+	php_test    = php(code),  # just testing, remove if coding anything serious
+	
+	domain      = domain_name(name) # or something like whether a mobile device,
+                                     # resolution information, etc. to select which css that fits	
+
+
+) # %%>    # UNCOMMENT POINT *B* (uncomment the FIRST comment hash tag for the remove unicode operation)                                           
+
+# PHP test: {**{php_test}**}
+# <br>{**{testing_output}**}<br>
+# <unicode>hello world</unicode>
+
+
+# statements marked by UNCOMMENT POINT *A* and *B* uncomment to remove unicode type quick python tags i.e., <unicode> </unicode>  though the contents in between the tags remain intact
+#.unicode_markup()	# this is the method to remove the unicode type python quick tags, and give it a False argument
+					# the utags wrapper already is automatically created
+					# Usage:
+					# place the keyword False in between .unicode_markup() parenthesis to remove the unicode type python quick tags,
+					# i.e., to drop the <unicode> and </unicode> tags but not the contents,text between the tags
+					# by giving the method unicode_markup() the argument of False it will remove the unicode tags
+					# (by removing the argument or by setting it to True that is the same thing) the unicode tags remain intact.
+					# (See front_compiled.py in github commit #47 of this project that I specially modified to show a working usage example)
+					# Otherwise, modify this latest version according to usage description
+					
+	# testing writing print statement to the web browser 
+	# the intent is to create a python function to wrap the writing with print statements to the web browser's console
+	code_init = <%
+$name = 'Stan Switaj';
+ 
+$fruits = array("banana", "apple", "strawberry", "pineaple");
+ 
+$user = new stdClass;
+$user->name = 'Hello 123.00 \\a\\1\\2\\3\\4\\5\\6\\7\\8\\9\\b\\f\\v\\r\\n\\t\\0\\x0B ';
+$user->desig = "CEO";
+$user->lang = "PHP Running Through subprocess (Python)";
+$user->purpose = "To print log messages to the browser console messages to the browser";
+# var_dump($fruits);
+#logConsole('$name var', $name, true);
+#logConsole('An array of fruits', $fruits, true);
+#logConsole('$user object', $user, true);
+%>
+
+
+	# Written to print to the console log of a web browser
+
+	# Including an external python file that uses quick tags, (both open and close tags), and a format string variable syntax of {**{variable_name}**}
+	
+	s = (code_init + "\n" + console_log_function()  )
+	
+	# Escaping quotes seem to be the only small hassle from converting php source code to php source code within a python triple quoted string 
+	# (due to the slightly obtuse (yet it works) situation of... running PHP then system calling Python and within it, running PHP within a python triple quoted string)
+	# therefore, NOTE: the extra backslash compared with the php version
+	# this will convert it to the exact php, but I've no need of it at this time, though note the following variable name in the comments (the immediate next line)
+	# string_to_write__NOT_DISPLAY_for_exact_PHP_equivalent_source_code = s.replace("#\\'#", "#'#").replace('#\\"\\"#', '#""#').replace("#\\'\\'#", "#''#")   # works, tested
+	# The previous statement string (in the comments) can be used to write if desired to get the exact PHP equivalent that is different than the string used to output to the web page 
+	# (due to an extra backslash required by python for quotes)
+
+	
+	# For convenience I've included it in the following write statement anyway (to get the exact equivalent to the PHP source code string)
+	# The next line is optional to the OUTPUT to Web (i.e., it will not affect the display OUTPUT to web 
+	# (only for the previously stated purpose. So it's just to inspect and review the string by writing it to a file)
+	s = s.replace("#\\'#", "#'#").replace('#\\"\\"#', '#""#').replace("#\\'\\'#", "#''#") # comment this line out to view the exact string that gets OUTPUT to the web
+	
+	#to_write('testit.txt', s ) # uses to determine problematic characters only, can be removed
+	
+	# Sidenote: I did update the original regex and removed the \s to allow spaces and its noteworthy that it only needs one backslash to escape the string
+	# as well as extended the regex just for demonstration to cover the escape characters commonly used
+	# this is how the original regex should be escaped:     '#[\s\\r\\n\\t\\0\\x0B]+#'       and works (note remove the \s to allow spaces) 
+
+	# TO OUTPUT to web
+	print php(  s   )
+
+
+	# ALSO NOTE: On the line immediately starting with the (percent sign and greater-than sign), this is the closing tag
+	# gets replaced back to (triple double quotes and open parenthesis, in the situation when the same_format is set to true)
+
+if __name__ == "__main__":  # in the case not transferring data from php, then simply revert to a previous version, commit
+	create_superglobals(sys.argv)
+	print_args(sys.argv, '<br>HERE front.py '+'<br>')
+	
+	if( not len(sys.argv) >= 2 ):
+		print "argument is required, which domain name from the initial, starting PHP"
+		sys.exit(1)
+		
+	output(name=sys.argv[1])
+
+
+	
+	
+#   https://sarfraznawaz.wordpress.com/2012/01/05/outputting-php-to-browser-console/
+#   http://stackoverflow.com/questions/843277/how-do-i-check-if-a-variable-exists-in-python same as
+#   to test variable existence http://stackoverflow.com/a/843293  otherwise .ini for initial options
+#   nice unicode description: https://greeennotebook.wordpress.com/2014/05/24/character-sets-and-unicode-in-python/
+
+
+# END SOURCE CODE OF PY PAGE OUTPUT #
+### NOTE: DO NOT CHANGE THE TEXT ON THE PREVIOUS LINE!!!!
+
+
+
+### NOTE: DO NOT CHANGE THE TEXT ON THE NEXT LINE!!!!
+# START PRE PROCESSOR.PY WRITE OUTPUT #
+
+import sys
+import re
+
+option_auto_trailing_backslash_doubleit = True  # when True,  resolves by converting trailing \ to \\     (alternative method is setting to False)
+                                                # when False, resolves by adding a space to end of python quick tag string to auto resolve python not allowing trailing backslash in triple quoted string
+                                                # either is ok, works
+def print_args(s):
+	for item in s:
+		print 'ARG:(' + item + ')'
+		
+def print_tuple(u):
+	for item in u:	
+		#print item                              # this will print  the raw string literal version of it (newlines shown as \n literally text displayed in command line text)
+		print str( item[0] ) + ' ' + item[1] + '<br>'    # this      prints the escaped version of it (e.g., newlines wrap)
+
+def print_tuple_4i(u):
+	for item in u:	
+		#print item                              # this will print  the raw string literal version of it (newlines shown as \n literally text displayed in command line text)
+		print str( item[0] ) + ' ' + item[1] + ' ' + item[2] + ' ' + str( item[3] )
+
+def makes_tuple_find(s, item, previous_text_character_length=0):
+	idx=0
+	t=[]
+	while(1):
+		i = s.find(item,idx)
+		
+		if (i== -1):
+			break
+		
+		if (i == 0): # in the case of /%>    i then is 0
+			t.append( ( i, 'FALSE_START' + s[0:i+len(item)] ) )
+		else:
+			t.append( ( i , s[i-previous_text_character_length:i+len(item)] ) )
+		idx = i+1
+	return t
+	
+def reverse_tuple_list(t):
+	v=[]
+	l = len(t)
+	idx = l
+	for x in range(l):
+		v.append( ( t[idx-1][0] , t[idx-1][1] ) )
+		idx = idx - 1
+	return v
+	
+def make_quad_tuple_find_between_tags_reverse_order(s, opentag = '<%', closetag = '%>'):
+	
+	arr = makes_tuple_find(s, opentag)
+	
+	arr2 = reverse_tuple_list(arr)
+
+	tup = []
+	for item in arr2:
+		
+		tmp = item[1]
+		idx = item[0]
+		res = s.find(closetag, idx) # can do idx+2 to be exact
+
+		if res == -1:
+			print 'early exit, cannot find closing python quick tag'
+			sys.exit(1)
+			
+		tup.append( ( item[0], item[1], '%>', res ) )
+	return tup		
+
+	
+def auto_backslash_escape_adjacent_to_python_quicktag(s, array_of_tuples_in_reverse_order , thing): # adjacent to the closing python quicktag   %>
+	t = s+' '  # just an exercise to not modify the original,  otherwise  s works too
+	t = t[:-1] # to create a new string , otherwise perhaps     t = s[:]  e.g., http://www.python-course.eu/deep_copy.php
+	for i in array_of_tuples_in_reverse_order:
+
+		if i[1] == thing: #ok, that the required result
+			print 'yes'                                     # then an edit to the source code will only occur when a count > 0
+		else:
+			t = t[: i[0]+1  ] + '\\' + t[  i[0]+1  :]
+	
+	return t
+	
+def findindices_of_nonwhitespace(s): # string  , returns tuple  (index and item) , this function not used for now
+                                     # split function  enhanced to also return the indices of each item 
+	arr = s.split()
+	t=[]
+	for item in arr:
+		i=0
+		i = s.find(item, i)
+		t.append((i,item))
+	return t		
+
+def adjacent(itemA, itemB, new, s): # skips whitespace  # regrettably had to resort to this regex, required, therefore this function
+	
+	# something like this should be possible (using itemA and itemB)
+	restr = itemA + r'\s{0,}' + itemB  # not using this string because,
+	# due to the operation of regex and its variability it's due to escaping of characters and other reasons
+	
+	# therefore:
+	return re.sub(r'\(\s{0,}<%', new, s)  # 0 to many spaces in between the ( and <%     #note: i had to escape the open parenthesis in this regex search
+	
+	
+def algorithm(s, tw, uni_val=str(True) ):
+	
+	global option_auto_trailing_backslash_doubleit # when set to False adds space to resolve trailing backslash issue
+	
+	uni_str = '.unicode_markup('+uni_val+')'
+	
+	if (tw):
+
+		s = s.replace('return <%', 'return utags(training_wheels_bit_slower_to_remove(r"""')
+		s = s.replace('= <%', '= utags(training_wheels_bit_slower_to_remove(r"""')
+		
+        # note adjacent function for any number of spaces between ( and <%
+		s = adjacent('(', '<%', '( utags(training_wheels_bit_slower_to_remove(r"""', s)
+		
+		s = s.replace('<%', 'print utags(training_wheels_bit_slower_to_remove(r"""')
+#		s = s.replace('%%>', ')'+uni_str )    # UNCOMMENT POINT *C* (uncomment the FIRST comment hash tag for the remove unicode operation)      # to remove quick workaround, remove this line
+		
+		if(option_auto_trailing_backslash_doubleit): # an alternative to the algorithm2 solution that (resolves it by adding a trailing backslash) is 
+			s = s.replace('%>','"""))')              # to simply add a space to the end of the string at this exact point of the code (that modifies the compiled code only) that somewhat resolves the trailing backslash issue in python triple double quotes 2015.02.08
+		else:
+			s = s.replace('%>',' """))')     # adds a space 
+
+#		s = s.replace('""")).format (     %:)>', '""").format (   #  %:)> ')    # UNCOMMENT POINT *D* (uncomment the FIRST comment hash tag for the remove unicode operation)     
+		# about the previous line,  to remove quick workaround, remove this line, way to rid one close parenthesis, with the happy face keyword created for this purpose , it comments out the keyword %:)> 
+
+		# statements marked by UNCOMMENT POINT *C* and *D* uncomment to remove unicode type quick python tags
+		# uncomment to remove unicode type quick python tags i.e., <unicode> </unicode>  though the contents in between the tags remain intact
+	else:
+		s = s.replace('return <%', 'return utags(r"""')
+		s = s.replace('= <%', '= utags(r"""')		
+		s = s.replace('<%', 'print utags(r"""' ).replace('%>', '""")')		
+	return s
+
+def algorithm2(s):
+										 # added: 2015.02.08 (feature to auto escape backslash for trailing raw literal triple double quotes to make it a valid python string)
+	item1 = r'\\%>'                      # must be raw string literal
+	arr1  = makes_tuple_find(s, item1 )
+	item2 = '\%>'
+	arr2  = makes_tuple_find(s, item2, 1)
+	arr3  = reverse_tuple_list(arr2)     # to add a slash, from end to front so indices consistent
+	s     = auto_backslash_escape_adjacent_to_python_quicktag(s, arr3, item1)
+	return s 
+
+def algorithm_to_allow_tdq_within_quick_tags(s, old='"""', new='&quot;&quot;&quot;'): # to allow triple double quotes within quick tags <% %>
+
+	tup = make_quad_tuple_find_between_tags_reverse_order(s)
+
+	for i in tup:
+	
+		s = s[:i[0]] + s[i[0]:i[3]].replace(old, new) + s[i[3]:]
+		
+		#s = s[:i[0]] + s[i[0]:i[3]].replace('"""', '&quot;&quot;&quot;') + s[i[3]:]
+
+	return s
+
+# the algorithm created by Stan "Lee" Switaj
+def algorithm_to_allow_tdq_within_quick_tags_final_done(s, opentag, closetag, old, new ): # instead of regex, perhaps not going to be used
+
+	tup = make_quad_tuple_find_between_tags_reverse_order(s, opentag, closetag)
+
+	for i in tup:
+		s = s[:i[0]] + s[i[0]:i[3]].replace(old, new) + s[i[3]:]
+		
+	return s
+
+
+def modify_it(file, TW=False):
+	
+	global option_auto_trailing_backslash_doubleit
+
+	with open(file, "r+") as fp:
+		s = fp.read()
+		fp.seek(0)
+		
+	if (option_auto_trailing_backslash_doubleit): # by converting trailing \ to \\   Otherwise alternative method to add space, i.e., set this variable to False at the top
+		s = algorithm2(s)		
+
+		if (TW):
+			fp.write( algorithm(s,TW) )
+		else:
+			fp.write( algorithm(s,TW) )
+		fp.truncate() # unnecessary, except when it is
+
+def modify_diff(source, TW=False, dest='', uni_val=''):
+
+	global option_auto_trailing_backslash_doubleit
+	
+	with open(source, 'r') as rp:
+		s = rp.read()
+	
+	if (option_auto_trailing_backslash_doubleit): # by converting trailing \ to \\   Otherwise alternative method to add space, i.e., set this variable to False at the top
+		s = algorithm2(s)
+	
+	
+	s = algorithm_to_allow_tdq_within_quick_tags(s) # python quick tags are already the initial tags
+		
+	#s = algorithm_to_allow_tdq_within_quick_tags_final_done(s, '<%', '%>', '"""', '&quot;&quot;&quot;') # instead of regex
+
+	with open(dest, 'w') as wp:
+		if (TW):
+			wp.write( algorithm(s,TW, uni_val) )
+		else:
+			wp.write( algorithm(s,TW) )
+		
+if __name__ == "__main__":  # in the case not transferring data from php, then simply revert to a previous version, commit
+	# simply remove or comment out the print statements at your convenience, used just for debugging and testing purposes
+	if( not len(sys.argv) >= 2 ):
+		print "argument is required, which domain name from the initial, starting PHP"
+		sys.exit(1)
+	
+	print (' Preprocessor ')
+	print_args(sys.argv)
+	
+	if ( sys.argv[1] == '-TW' ):
+
+		if ( len(sys.argv) == 3 ):
+			modify_it( file=sys.argv[2], TW=True )
+		elif( len(sys.argv) == 5):
+			modify_diff( source=sys.argv[2], TW=True, dest=sys.argv[3], uni_val=sys.argv[4] )
+		else:
+			print 'python file is required'
+			sys.exit(1)
+	else:
+		modify_it( file=sys.argv[1] )
+
+### NOTE: DO NOT CHANGE THE TEXT ON THE NEXT LINE!!!!
+# END PRE PROCESSOR.PY WRITE OUTPUT #
+		
+
+### NOTE: DO NOT CHANGE THE TEXT ON THE NEXT LINE!!!!
+# START SIMPLE PREPROCESSOR AUTO PRINT LITERAL.PY WRITE OUTPUT #
+		
+# This begins the file simple_preprocessor_auto_print_literal.py
+# this occurs after the initial simple_preprocessor.py step
+# 
+# therefore, front_compiled.py (or whatever its name is given
+# by php ( or perhaps for include files also by python)
+# flimsy at this time
+import sys
+
+def print_array(s):
+	print 'Array items: '
+	for x, item in enumerate(s):
+		print str(x)+':('+item+')'
+	print '<br>'
+
+def is_found(s):	
+	return False if s == -1 else True
+   #return WHEN_TRUE_THIS  if EVALUATES_TO_TRUE  else  WHEN_FALSE_THIS
+
+def repeat(s,times):
+	return s * times if times > 0 else ''
+	
+def process(lines):
+	#   example, (spaces ok)
+	#   print_wwwlog('   is replaced with   print_wwwlog(r'
+	#   print_wwwlog("   is replaced with   print_wwwlog(r"
+	
+	out = ''
+	for line in lines:
+		#s = line.split()      # or line.lstrip()  same thing    then  s[0]
+		func = 'print_wwwlog'
+		
+		# the idea is     if ( '<%' in line and '%>' in line  )   # due to it already being converted to triple double quoted a raw string literal string
+		# but because pre_processor.py runs first, therefore its the following:
+		if ( '( utags(training_wheels_bit_slower_to_remove(r"""' in line and '""")' in line ):		# therefore, presuming that quick tags are being used
+			out += line                             # therefore, not automatically adding r, already done
+			continue
+		
+		if ( line.lstrip().startswith(func) ):  	#  .startswith(func)     same as      [:len(func)] == func    works 
+			s   = line.find("'")
+			d   = line.find('"')
+			
+			print '<br>LINE: (' + line + ')'		# print_array(s)
+			
+			val = -1
+			if ( is_found(s) and is_found(d) ): 	# situation of both (all) exist in string
+			
+				if s < d:
+					val = s
+					print 'point #1 - IS FOUND (single quote) '
+				else:
+					val = d
+					print 'point #2 - IS FOUND (double quote) '
+			elif ( is_found(s) or is_found(d)  ): 	# one or other exist in string (not both)
+			
+				if is_found(s):
+					val = s
+					print 'point #3 - IS FOUND (single quote) '
+				else:
+					val = d
+					print 'point #4 - IS FOUND (double quote) '
+			else: # therefore neither exist in string i.e.,  not is_found(s) and not is_found(d)
+					# exit somehow
+					out += line   #  its an early go to next item in the loop,  can r literal strings within quotes  not variables or returned strings from function returns
+					print '<br><br> Nothing found <br><br>'
+					continue
+			
+			print 'VAL IS: ('+ str(val) + ')'
+			print 'VAL VALUE IS: ('+ line[val] + ')'
+			
+			if ( is_found(val) ):					# determine if triple quoted string or not
+				if line[val:val+3] == '"""':
+					print '<br>its a triple double quote<br>'
+					print 'TDQ=(' + line[val:val+3] +')'
+					
+				elif line[val:val+3] == "'''":
+					print '<br>its a triple single quote<br>'
+					print 'TSQ=(' + line[val:val+3] +')'
+				else:
+					print 'SITUATION IS: (' + line[val:val+3] + ')'
+					
+			paren = line.find("(")					# openparenthesis
+			count = len(line[paren+1:val])
+			print '<br>SPACE BETWEEN IS : COUNT : ' + str(count) + '<br>'
+			
+			result = line[:paren+1] + repeat(' ',count-1) + 'r' + line[val:]  # this is the line added with r
+			print '<br>FINAL STRING IS  : ' + result + '<br>'
+			
+			
+			out += result
+		else:
+			out += line
+	
+	return out
+	# initially for every print_wwwlog(  then read its argument
+	
+# until exact, just going to use a 3rd file to review
+def modify_it(file):   # received _compiled.py
+
+	#with open(file, 'r+') as fp:
+	#	lines = rp.readlines()
+	#	data = process(  lines  )
+	#	fp.seek(0)
+	#	fp.write(   data   )
+	#	fp.truncate()
+
+	
+	with open(file, 'r') as rp:
+		lines = rp.readlines()  # includes newlines, otherwise  .read().splitlines()  removes newlines
+		data = process(lines)
+		
+	with open(file , 'w') as wp:
+		data = wp.write(  data  )
+		
+
+if __name__ == "__main__":
+
+	if( not len(sys.argv) >= 3 ):
+		print "argument is required"
+		sys.exit(1)                  # import sys
+		
+	# sys.argv[1]      #argument received
+	print '<br>'
+	print 'SIMPLE_PREPROCESSOR_AUTO_PRINT_LITERAL file(' + sys.argv[1] + ')';
+	print 'SIMPLE_PREPROCESSOR_AUTO_PRINT_LITERAL use, convert to auto literals, i.e., r the strings (' + sys.argv[2] + ')';
+	# perhaps argument when you know not to forget the raw string escape keyword  r'  '
+	if (sys.argv[2] == 'False'):
+		print 'EXITING SIMPLE_PREPROCESSOR_AUTO_PRINT_LITERAL.'
+	
+	else:
+		print '<br>'
+		modify_it(sys.argv[1])		
+		
