@@ -7,7 +7,7 @@
 # by php ( or perhaps for include files also by python)
 # flimsy at this time
 import sys
-
+ 
 def print_array(s):
 	print 'Array items: '
 	for x, item in enumerate(s):

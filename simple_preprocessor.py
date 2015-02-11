@@ -2,7 +2,7 @@
 
 import sys
 import re
-
+ 
 option_auto_trailing_backslash_doubleit = True  # when True,  resolves by converting trailing \ to \\     (alternative method is setting to False)
                                                 # when False, resolves by adding a space to end of python quick tag string to auto resolve python not allowing trailing backslash in triple quoted string
                                                 # either is ok, works
