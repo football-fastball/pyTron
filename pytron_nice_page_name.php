@@ -89,7 +89,36 @@ function raise($s) { return strtoupper ($s); }
 function str_bool($s){ return ( ($s) ? 'True' : 'False'); };
 function without_file_extension($s) { return substr($s, 0, strrpos($s, ".")); } // without . and file extension
 function right($str, $length) {return substr($str, -$length);  }
-// perhaps $opentag = ''  , $closetag=''  within parenthesis  specifying arguments (otherwise argument order)
+
+function mod_dt($file) {
+	return date ("YmdHis", filemtime($file));
+}
+
+function is_compiled($source, $compiled) {
+	
+	echo 'source:' . $source . '<br>';
+	echo 'compiled:' . $compiled . '<br>';
+	
+	if ( not( file_exists ($source) ) ) {
+		echo "$source file does not exist, exiting";
+		return false;
+	}
+	
+	if ( not( file_exists ($compiled) ) ) {
+		echo "$compiled file does not exist" . '<br>';
+		return false;
+	}
+	
+	if ( mod_dt($source) >= mod_dt($compiled) ){
+		echo 'return false';
+		return false;
+	}
+	else {
+		echo 'return true';
+		return true;
+	}
+}
+
 function get_string_tag_to_tag($s, $opentag, $closetag=''){
 	
 	$opentag  = underscore_to_space($opentag );
@@ -187,8 +216,7 @@ if (not($done) ) {
 	$compiled = $base_name_without_extension . '_compiled.py';
 	
 	//check if compiled file exists
-	if (not (file_exists( $compiled_folder . $base_name_without_extension . '_compiled.py')))
-	{
+	if ( not( is_compiled($source, $compiled) ) ) {	// improves	on		// if (not (file_exists( $compiled_folder . $base_name_without_extension . '_compiled.py'))){
 	
 		// if($quick_development_mode){ //compile in same directory  (statement seems to be the same however
 		
@@ -198,11 +226,13 @@ if (not($done) ) {
 
 			echo 'here it is';
 			
+		
+			
 echo passthru(	'python simple_preprocessor.py -TW "'.$source.'" "'.$compiled.'" "'.$str_bool_uni_value.'" 2>&1  && '.    
 				'python simple_preprocessor_auto_print_literal.py "'.$compiled.'" "'.str_bool($auto_print_wwwlog_literal).'"  2>&1  '.	   /* manually add r to print_wwwlog (if need to) */
 			 '');
 			
-
+		
 						
 		// else //compile in possibly different directory
 		//$compiled = $compiled_folder . $compiled_folder;
