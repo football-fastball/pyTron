@@ -26,5 +26,9 @@ Usage:  Your web server will serve the PHP file, page requests are to be made to
 After making changes to your source code, pytron_nice_page_name_compiled.py must be deleted, then running the .php file will re-create the file.
 Later versions of pyTron will automatically determine whether the source has been modified and will compile it automatically for you.
 
+2015.02.13
+Several significant features added, dynamic directories, etc.
+
+
 Enjoy.
 

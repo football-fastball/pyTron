@@ -5,58 +5,182 @@
 // Description: Directories that use the internal routing of a web browser and allow to include from 
 //              anywhere within a domain name without having the exact path to the include file
 
-$subdirectory_of_domain_name = ''; /* begin with a forward slash, without ending slash ( subdirectory under document root of a domain name) 
-									* most cases this variable is set to ''
-									*/
+// EDIT THIS, this 
+$project_root = '';			// when '' then it's document root (of domain name)  MUST put a trailing forward slash at the end of project root (should) 
+							// use either '' (that is empty string) or some_directory/   (not forward slash by itself, i.e.,  '/' )
+							//
+							// set to project root, e.g., project_root = 'test2/';
+							
 $auto_print_wwwlog_literal = True;
 
-// The following function determines from the root directory of the web site where the include files actually are.
-function magic_directories( $include ) { // include from your project folder root directory
-	global $subdirectory_of_domain_name;
-	return b2f(substr(__FILE__, 0, -strlen($_SERVER['SCRIPT_NAME'])) . $subdirectory_of_domain_name . '/' . $include);
-}
 
-// backslash to forward-slash
-function b2f($s) { return (str_replace('\\','/',$s)); } // optional on some OS environments, for platform independence
+// Created By Stan "Lee" Switaj
 
+// How it works:  Run this php program from ANY subdirectory on a webserver.
 
 // how it works:  As an example your project is in a folder named  fiction_books  on a root of a domain name
-//                Then        'fiction_books'      is the      subdirectory_of_domain_name
+//                Then        'fiction_books'      is the      project_root
 //
 //                And your project contains a folder that you place your includes for css, js, etc.
 //                Therefore, an example is:                  'include_directory/file_to_include_to_your_project.php'
 
 
-
-// example, works,  the path to the helper_function.php is set relative to the project folder
-//include( magic_directories( 'include/helper_functions.php' ) );
-
-
 $done = false;
 
 $quick_development_mode = false   ; // puts all the files in the same folder
-                                    // i.e., this_page.php, this_page.py, this_page.css this_page.js simple_preprocessor.py (therefore compiled in same folder also)
-
+									// i.e., this_page.php, this_page.py, this_page.css this_page.js (though the compiled folder will have the actual source that's sent to the browser)
+									//                      EDIT_THIS_FILE (the .py .css, .js, .pyj  the web site files), do NOT edit the .php file, except for its options
 
 
 
 # libs, e.g., jquery that are included frequently in a project (a way to dynamic relative directories (term i coined) to domain name, (and even an offset directory)
-$css_folder_always   = ''         ;  // when empty string therefore not using
-$js_rs_folder_always = ''         ;  // ...
+$css_folder_always   = 'css'       ; // when '' therefore not using, or optionally set to the same folder as css_folder
+$js_rs_folder_always = 'js'        ; // when '' therefore not using, or optionally set to the same folder as js_rs_folder
 
-$css_per_page_folder_using   = true; // when false, then its a file
-$js_rs_per_page_folder_using = true; // javascript rapydscript
+$css_per_page_folder_using   = true; // when false, perhaps use a file using   note: just the folder is created
+$js_rs_per_page_folder_using = true; // javascript rapydscript                 ...
 
-// when the two previous choices are false, then just a file in the following directories by the same name as the file
-$css_folder = 'py_css'            ;
-$js_fodler = 'py_js'              ;
-// folders will be same name as filename within /css  or /js
-// simply includes any css or js within those folders
+$css_per_page_file_using = true;     // when  css_per_page_folder_using    is set to true, then this should be false
+$js_per_page_file_using  = true;     // when  js_rs_per_page_folder_using  is set to true, then this should be false
+$rs_per_page_file_using  = true;     // when  js_rs_per_page_folder_using  is set to true, then this should be false
+
+// when the three previous choices are false, then just a file in the following directories by the same name as the file
+$include_folder = 'pyinclude/'  ;
+$css_folder     = 'pycss/'      ;
+$js_rs_folder   = 'pyjs_rs/'    ;
+// folders will be same name as filename within /pycss  or /pyjs_rs
+// simply include any css or js within those folders
+//  
+
+$compiled_folder = 'COMPILED/'          ;	// MUST INCLUDE TRAILING backslash or forwardslash
+											// use either '' (that is empty string) or some_directory/   (not forward slash by itself, i.e.,  '/' )
+											// when this is '' (its the same as the folder SERVER[DOCUMENT_ROOT] is)
+										
+								
+$preprocessor_folder = 'PREPROCESSOR/'	;   // MUST INCLUDE TRAILING backslash or forwardslash
+											// in most cases this will be '' (emtpy string), this just means that
+											// the simple_pre_processor.py and literal.py  are placed in 
+											// the same folder as defined by    project root
+											// The preprocessor FILES contained within this folder
+										
 
 
-$compiled_folder = ''              ;  // MUST INCLUDE TRAILING backslash or forwardslash, or ('' or '.' for cwd)
+
+$arr = array( &$include_folder, &$css_folder, &$js_rs_folder, &$project_root, &$compiled_folder, &$preprocessor_folder);
+integrity_check_count($arr); // read only, counts only
+
+// Intregrity Checks			// can be removed if certain conditions of variables are met
+foreach ($arr as &$value) {
+
+// check #1
+    $value = b2f($value);   // when you are certain you will not use backslashes, simply comment these lines out!!
+							// when you are certain that your folders contain a trailing forwardslash, simply comment this statement out!!
+// check #2				
+//             condition             ? when true : when false
+$value = (substr($value, -1) == '/') ? $value    :  $value . '/';  // when you are certain that you have put a forwardslash at the end of a folder, simply comment this statement out!!
+// description: condition asks , does it end with a forwardslash
+
+// check #3
+$v = $value;					
+if ($v == '.' ||  $v == './' ||  $v == '.\\' || $v == '/' || $v == '\\') { $value = ''; }  // current working directory should be  '' (recommended, therefore this line not needed)  (perhaps needed if you insist on ./  or . as cwd)
+}
+
+function integrity_check_count($arr) {
+	// Integrity Counts For Display	
+	$backslash_conversions       = 0;
+	$cwd_coversions              = 0;
+	$double_forwardslash_warning = 0;
+
+	$trailing_fowardslash_required_when_not_cwd_conversion = 0;
+
+	$backslash_conversions       = backslash_conversions_count($arr);
+	$cwd_coversions              = cwd_varieties($arr);
+	$double_forwardslash_warning = double_forwardslash_warning_count($arr);
+	$trailing_fowardslash_conversion = adds_trailing_fowardslash_when_not_cwd_count($arr, True); // trailing_fowardslash_required_when_not_cwd_conversion
+																								 // remove the True parameter if you prefer using . as your cwd 
+	print '<pre>';  // anyway, inner pre tags are when outer pre tags are not used, no affect when using pre tags twice on text	(i.e., can remove inner pre tags when using outer pre tags)														 
+	print '<h1> Integrity checks (0 is better for each) (cwd and double forwardslash perhaps are ok (depending on preference or situation)) </h1><br>';
+	print '<b> backslash conversions issues (errors): <pre style="display:inline">( '.$backslash_conversions.' )</div></b><br>';
+	print '<b> trailing forwardslash missing, conversions issues (errors): <pre style="display:inline">( '.$trailing_fowardslash_conversion.' )</div></b><br>';
+	print '<b> cwd conversions = <pre style="display:inline">( '.$cwd_coversions.' )</div> </b><br>';
+	print '<b> double forwardslash potential warnings: <pre style="display:inline">( '.$double_forwardslash_warning.' )</div> </b><br>';
+	print '</pre>';
+	print '<br>';
+}
+
+function adds_trailing_fowardslash_when_not_cwd_count($arr, $include_cwd_warnings = false) {
+	$count = 0;
+	foreach($arr as $value) {
+		
+		if ($include_cwd_warnings)
+			if ($value == '.')
+				$count++;
+			
+		if ( $value == '' )
+			;
+		else {
+			(substr($value, -1) == '/') ?       ''     :  $count++ ;   // when trailing forwardslash already there nothing or it count it due to it not there
+		}
+	}
+	return $count;
+}
 
 
+function backslash_conversions_count($arr){
+	$count = 0;
+	foreach($arr as $value){
+		$count += count_substring('\\', $value);
+	}
+	return $count;
+}
+
+function count_substring($item, $s){
+	
+	$t = str_replace ( '', $item  , $s);
+
+	if ( (contains ('\\', $s) == false) || $item == '' )
+		return 0;
+	
+	return (strlen($s) - $strlen($t)) / 2;  // due to the error of an existing backslash being a length of two in php strings
+}
+
+function cwd_varieties($arr){
+
+	$count = 0;
+	foreach($arr as $value) {
+		$v = $value;
+		if ($v == '.' ||  $v == './' ||  $v == '.\\' || $v == '/' || $v == '\\')	// current working directory should be  '' (recommended, therefore this line not needed)  (perhaps needed if you insist on ./  or . as cwd)
+			$count++;  		
+	}
+	return $count;
+}
+
+function double_forwardslash_warning_count($arr){
+	
+	$count = 0;
+	foreach ($arr as $value){
+		$t = str_replace ( '', '//'  , $value);
+		$count +=   ( (strlen($value) - strlen($t)) / 2  );
+	}
+	return $count;
+}
+
+//function document_root_getcwd($s) {	return (b2f($s) == $_SERVER["DOCUMENT_ROOT"]) ? '' : '/' ; }
+
+function abs_project_root($directory_of_project_root) {
+	
+	return b2f($_SERVER["DOCUMENT_ROOT"] .'/'. $directory_of_project_root) ;
+}
+
+function all_folders_after_project_root_until_index($project_root) {  // relative to where the index.php is
+
+		$b = getcwd();
+		//print 'WHAT IS CWD=' . $b . '<br>';
+		//print 'what is document root=' . $_SERVER["DOCUMENT_ROOT"] . '<br>';
+		$all_after_root  = b2f(  substr( $b, strlen( $_SERVER["DOCUMENT_ROOT"] )+1, strlen($b) )  );
+		
+		return substr( $all_after_root , strlen($project_root), strlen( $all_after_root ) ) . '/';
+}
 
 
 // simple_preprocessor.py options
@@ -80,10 +204,25 @@ return $ret1;
 }
 
 function not($s){return !$s;}
-function to_write($file, $s){ file_put_contents($file, $s); }
+
+function to_write($file, $s){ 
+	
+	$filename = basename($file);
+	
+	if (not ($file == $filename) ) { // there's more to the filepath than just the file(presumes current path) (i.e., there's path also)
+		$var = substr($file, 0,  strlen($file) - strlen($filename) );
+		print 'creating_sub_folders_automatically : ( ' . $var . ' ) to the file: ( ' . $file . ' )' . '<br>';
+		mk_dir_p( $var );
+	}
+	
+	file_put_contents($file, $s); 
+}
+
+// backslash to forward-slash
+function b2f($s) { return (str_replace('\\','/',$s)); } // optional on some OS environments, for platform independence
 function to_read($file) { return file_get_contents($file) ; }
 function contains ($needle, $haystack) { return strpos($haystack, $needle) !== false; }
-function php_string_slicing($start, $end, $s) { return 	substr ($s,$start,$end - $start); } // yet_to_be_added
+function php_string_slicing($start, $end, $s) { return substr ($s,$start,$end - $start); }// yet_to_be_added
 function underscore_to_space($s) { return str_replace(  '_' , ' ' , $s ); } // str_replace($old,$new,$s)
 function raise($s) { return strtoupper ($s); }
 function str_bool($s){ return ( ($s) ? 'True' : 'False'); };
@@ -119,7 +258,38 @@ function is_compiled($source, $compiled) {
 	}
 }
 
+
+function quick_dev_mode($s){
+		file_put_contents( 'style.css'   , ''); //creates empty file
+		file_put_contents( 'script.js'   , ''); //creates empty file
+}
+
+function mk_dir_p($s) {	// returns true if exists
+	
+	if (file_exists($s)) 	// is_dir()
+		return 'exists';
+	else {
+		if (!mkdir($s, 0777, true))
+			return 'error';
+		else
+			return 'made';
+	}
+	
+	return false;
+}
+
+function make_this_folder($folder){
+	
+	if ($folder == '')
+		return true;
+	
+	return mk_dir_p($folder);
+}
+
 function get_string_tag_to_tag($s, $opentag, $closetag=''){
+	
+	global $project_root;
+	global $preprocessor_folder;
 	
 	$opentag  = underscore_to_space($opentag );
 	$closetag = underscore_to_space($closetag);
@@ -133,13 +303,13 @@ function get_string_tag_to_tag($s, $opentag, $closetag=''){
 		//echo " and exists at position $beginpos";
 	}
 
-if ($closetag==''){
-	$end = strlen($s);				// to end of file
-}
-else{
-	$end = strpos($s, $closetag);
-}
-	
+	if ($closetag=='') {
+		$end = strlen($s);				// to end of file
+	}
+	else {
+		$end = strpos($s, $closetag);
+	}
+		
 	
 	if ($end === false) {
 		echo "The string '$closetag' was not found in the string";
@@ -155,10 +325,14 @@ else{
 
 
 
-$var_file1=false;
-$var_file2=false;
-$var_file3=false;
-$md_comp_dir=false;
+
+
+
+$base_name_without_extension = without_file_extension(basename(__FILE__));
+$source   = $base_name_without_extension . '.py';
+$compiled = $base_name_without_extension . '_compiled.py';
+
+
 
 for ($i = 1; $i <= 1; $i++)	// to mimic a function, can then use break, continue without need for global vars
 if (not($done) ) {
@@ -168,7 +342,7 @@ if (not($done) ) {
 	$t = get_string_tag_to_tag($s, 	'#_START_SOURCE_CODE_OF_PY_PAGE_OUTPUT_#', 
 									'#_END_SOURCE_CODE_OF_PY_PAGE_OUTPUT_#');
 
-           $base_name_without_extension = without_file_extension(basename(__FILE__));
+           
 	$var = $base_name_without_extension . '.py';
 
 	if (not (file_exists($var))){  /* this_page_name.py file (front.py) */
@@ -183,7 +357,7 @@ if (not($done) ) {
 									
 	$var = 'simple_preprocessor.py';
 	if (not (file_exists($var))){
-		to_write($var, $u);
+		to_write( abs_project_root($project_root) . $preprocessor_folder . $var , $u );
 		$var_file2=true;
 	}
 
@@ -192,86 +366,107 @@ if (not($done) ) {
 									
 	$var = 'simple_preprocessor_auto_print_literal.py';
 	if (not (file_exists($var))){
-		to_write($var, $u);
+		to_write( abs_project_root($project_root) . $preprocessor_folder . $var , $u );
 		$var_file3=true;
 	}	
 	
-	$var = $compiled_folder;
-	if (not ($var == '' ))    //do
-	if (not (is_dir ($var))){ // do
-	
-		if (mkdir($var))
-			$md_comp_dir=True;
-		else
-			break;
-	}
-
-	// $var   = (condition ?  when_true :  when_false);
-	$compiled_folder = ($compiled_folder == '.' ? '' : $compiled_folder); //otherwise a begins_with function
-
-	
-	// perhaps a check either way when source >= modtime $compiled !!!!!
-	
-	$source   = $base_name_without_extension . '.py';
-	$compiled = $base_name_without_extension . '_compiled.py';
-	
-	//check if compiled file exists
-	if ( not( is_compiled($source, $compiled) ) ) {	// improves	on		// if (not (file_exists( $compiled_folder . $base_name_without_extension . '_compiled.py'))){
-	
-		// if($quick_development_mode){ //compile in same directory  (statement seems to be the same however
-		
-			echo '(PYTHON COMPILING)';
-			
-// working on...
-
-			echo 'here it is';
-			
-		
-			
-echo passthru(	'python simple_preprocessor.py -TW "'.$source.'" "'.$compiled.'" "'.$str_bool_uni_value.'" 2>&1  && '.    
-				'python simple_preprocessor_auto_print_literal.py "'.$compiled.'" "'.str_bool($auto_print_wwwlog_literal).'"  2>&1  '.	   /* manually add r to print_wwwlog (if need to) */
-			 '');
-			
-		
-						
-		// else //compile in possibly different directory
-		//$compiled = $compiled_folder . $compiled_folder;
+	if($quick_development_mode) {  // quick dev mode simply puts the .css, .js, and .pyj in the same folder as source and index.php
+		file_put_contents( $base_name_without_extension  . '.css'   , '');	//otherwise name them  style.css
+		file_put_contents( $base_name_without_extension  . '.js'    , '');	//                    script.js
+		file_put_contents( $base_name_without_extension  . '.pyj'   , '');	//                  pyscript.pyj   or  rapydscript.pyj
+		break;
 	}
 	
+	
+	$include_dir = false;
+	$include_dir_res = ( make_this_folder($include_folder) ) ? True : False; //break for early exit
+	//if ($include_dir_res)	  //early exit works, when making the done feature
+	//	break;
+	
+	$css_dir= false;
+	$css_dir_res = ( make_this_folder($css_folder) ) ? True : False; //break for early exit
+	//if ($css_dir_res)
+	//	break;
+
+	$js_rs_dir = false;
+	$js_rs_dir_res = ( make_this_folder($js_rs_folder) ) ? True : False; //break for early exit
+	//if ($js_rs_dir_res)
+	//	break;
+
+	
+	if ($css_per_page_folder_using)
+		mk_dir_p( $css_folder   .  $base_name_without_extension ); // creates folder with same name as this php file
+	else
+		file_put_contents( $css_folder  .  $base_name_without_extension  . '.css'   , ''); //creates empty file
+	
+	
+	if ($js_rs_per_page_folder_using)
+		mk_dir_p(  $js_rs_folder .  $base_name_without_extension  ); // creates folder with same name as this php file
+	else
+		file_put_contents( $js_rs_folder  .  $base_name_without_extension  . '.js'   , ''); //creates empty file
+	
+	
+	if ($rs_per_page_file_using)
+		file_put_contents( $js_rs_folder  .  $base_name_without_extension  . '.pyj'  , ''); //creates empty file
+		
+
 	if($quick_development_mode){ // not checking folders, but still precompiling... therefore, precompile before this.
 		echo 'early exit using a mimic function';
 		$done=true;
 		break;
 	}
 	
+	//if($quick_development_mode)
+		//quick_dev_mode($base_name_without_extension)
+	
+	
+
+	
 }
 
 
-if (not ($done)) //skips
-//the following statement, is a not  (they all must be true then can simply run, it is already compiled then
-// and files and folders of our mini content management system is done (via hybrid routing model i coined, aka, file based routing...)
-if(   $var_file1 && $var_file2 && $md_comp_dir ) {
+	$flex_folders = all_folders_after_project_root_until_index($project_root );  //This function is commented out because 
+		
+	print '<br><br>SHOULD HAVE A TRAILING SLASH result=(' .  $flex_folders  . ')<br><br>';
+		
+	// NOTE: magic...
+	$sources_magic_directory_compiled = abs_project_root($project_root) . $compiled_folder . $flex_folders . $compiled;
+	
+	
+	if ( not( is_compiled($source, $sources_magic_directory_compiled ) ) ) {
+	
+	
+		// when done is set, the folder check is still done due to perhaps the source and index files being moved to a different directory, the project will appear to be fine, but will not run unless the folder is created first before compiling the source 
+		mk_dir_p(abs_project_root($project_root) . $compiled_folder . $flex_folders);    //This function is commented out because these folders are being made in the previous function when done variable is false
+	
+	
+		print 'compiled_sources_magic_directory_path_also=( ' . $sources_magic_directory_compiled . ' )<br>';
 
-}
+	
+			echo '(PYTHON COMPILING) compiled=('.$sources_magic_directory_compiled.')' . '<br>';//$compiled_folder
+	
+	
+echo passthru(	'python '.abs_project_root($project_root).$preprocessor_folder.'"simple_preprocessor.py" -TW "'.$source.'" "'.$sources_magic_directory_compiled.'" "'.$str_bool_uni_value.'" 2>&1  && '.    
+				'python '.abs_project_root($project_root).$preprocessor_folder.'"simple_preprocessor_auto_print_literal.py" "'.$sources_magic_directory_compiled.'" "'.str_bool($auto_print_wwwlog_literal).'"  2>&1 ' );
+
+	}
+
+
 
 //run it
 
-//echo '(ALREADY COMPILED)';
+echo '(ALREADY COMPILED)';
 
-echo passthru('python "'.$compiled. '" "' .domain_name_endswith().'"  2>&1 ');
-
-	
-
-//
+echo passthru('python "'.$sources_magic_directory_compiled. '" "' .domain_name_endswith().'"  2>&1 ');
 
 
-
-// compiled files to optionally be elsewhere
 ?>
 
 <?php
-$msg = 'exit'; // change to '' to remove printing to screen
-die('exit');  // stops php from reading additional contents of this file
+
+				// READ THIS !!!!
+$msg = 'exit'; // change to '' to remove printing to screen   but KEEP THE NEXT STATMENT ON THE NEXT LINE
+die($msg);    // stops php from reading additional contents of this file.
 
 
 
