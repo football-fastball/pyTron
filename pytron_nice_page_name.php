@@ -342,7 +342,7 @@ if (not($done) ) {
 	$s = to_read(__FILE__);
 
 	$t = get_string_tag_to_tag($s, 	'#_START_SOURCE_CODE_OF_PY_PAGE_OUTPUT_#', 
-									'#_END_SOURCE_CODE_OF_PY_PAGE_OUTPUT_#');
+					'#_END_SOURCE_CODE_OF_PY_PAGE_OUTPUT_#');
 
            
 	$var = $base_name_without_extension . '.py';
@@ -355,7 +355,7 @@ if (not($done) ) {
 	}
 
 	$u = get_string_tag_to_tag($s, 	'#_START_PRE_PROCESSOR.PY_WRITE_OUTPUT_#',
-									'#_END_PRE_PROCESSOR.PY_WRITE_OUTPUT_#');
+					'#_END_PRE_PROCESSOR.PY_WRITE_OUTPUT_#');
 									
 	$var = 'simple_preprocessor.py';
 	if (not (file_exists($var))){
@@ -449,7 +449,7 @@ if (not($done) ) {
 	
 	
 echo passthru(	'python '.abs_project_root($project_root).$preprocessor_folder.'"simple_preprocessor.py" -TW "'.$source.'" "'.$sources_magic_directory_compiled.'" "'.$str_bool_uni_value.'" 2>&1  && '.    
-				'python '.abs_project_root($project_root).$preprocessor_folder.'"simple_preprocessor_auto_print_literal.py" "'.$sources_magic_directory_compiled.'" "'.str_bool($auto_print_wwwlog_literal).'"  2>&1 ' );
+		'python '.abs_project_root($project_root).$preprocessor_folder.'"simple_preprocessor_auto_print_literal.py" "'.$sources_magic_directory_compiled.'" "'.str_bool($auto_print_wwwlog_literal).'"  2>&1 ' );
 
 	}
 
