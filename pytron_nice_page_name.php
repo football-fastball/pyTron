@@ -109,14 +109,16 @@ function integrity_check_count($arr) {
 }
 
 function adds_trailing_fowardslash_when_not_cwd_count($arr, $include_cwd_warnings = false) {
+	
 	$count = 0;
+	
 	foreach($arr as $value) {
 		
 		if ($include_cwd_warnings)
 			if ($value == '.')
 				$count++;
 			
-		if ( $value == '' )
+		else if ( $value == '' )
 			;
 		else {
 			(substr($value, -1) == '/') ?       ''     :  $count++ ;   // when trailing forwardslash already there nothing or it count it due to it not there
