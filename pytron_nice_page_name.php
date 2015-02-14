@@ -177,8 +177,6 @@ function abs_project_root($directory_of_project_root) {
 function all_folders_after_project_root_until_index($project_root) {  // relative to where the index.php is
 
 		$b = getcwd();
-		//print 'WHAT IS CWD=' . $b . '<br>';
-		//print 'what is document root=' . $_SERVER["DOCUMENT_ROOT"] . '<br>';
 		$all_after_root  = b2f(  substr( $b, strlen( $_SERVER["DOCUMENT_ROOT"] )+1, strlen($b) )  );
 		
 		return substr( $all_after_root , strlen($project_root), strlen( $all_after_root ) ) . '/';
@@ -418,12 +416,7 @@ if (not($done) ) {
 		break;
 	}
 	
-	//if($quick_development_mode)
-		//quick_dev_mode($base_name_without_extension)
-	
-	
 
-	
 }
 
 
