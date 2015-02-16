@@ -1,5 +1,6 @@
 
-		
+
+
 # This begins the file simple_preprocessor_auto_print_literal.py
 # this occurs after the initial simple_preprocessor.py step
 # 
@@ -7,7 +8,7 @@
 # by php ( or perhaps for include files also by python)
 # flimsy at this time
 import sys
- 
+
 def print_array(s):
 	print 'Array items: '
 	for x, item in enumerate(s):
@@ -33,7 +34,7 @@ def process(lines):
 		
 		# the idea is     if ( '<%' in line and '%>' in line  )   # due to it already being converted to triple double quoted a raw string literal string
 		# but because pre_processor.py runs first, therefore its the following:
-		if ( '( utags(training_wheels_bit_slower_to_remove(r"""' in line and '""")' in line ):		# therefore, presuming that quick tags are being used
+		if ( '( pyQuickTags(r"""' in line and '""")' in line ):		# therefore, presuming that quick tags are being used
 			out += line                             # therefore, not automatically adding r, already done
 			continue
 		

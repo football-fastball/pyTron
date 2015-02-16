@@ -1,8 +1,9 @@
 
 
+
 import sys
 import re
- 
+
 option_auto_trailing_backslash_doubleit = True  # when True,  resolves by converting trailing \ to \\     (alternative method is setting to False)
                                                 # when False, resolves by adding a space to end of python quick tag string to auto resolve python not allowing trailing backslash in triple quoted string
                                                 # either is ok, works
@@ -105,20 +106,21 @@ def algorithm(s, tw, uni_val=str(True) ):
 	uni_str = '.unicode_markup('+uni_val+')'
 	
 	if (tw):
-
-		s = s.replace('return <%', 'return utags(training_wheels_bit_slower_to_remove(r"""')
-		s = s.replace('= <%', '= utags(training_wheels_bit_slower_to_remove(r"""')
+			#pyQuickTags now contains utags object, str_fv object, etc.
+		
+		s = s.replace('return <%', 'return pyQuickTags(r"""')
+		s = s.replace('= <%', '= pyQuickTags(r"""')
 		
         # note adjacent function for any number of spaces between ( and <%
-		s = adjacent('(', '<%', '( utags(training_wheels_bit_slower_to_remove(r"""', s)
+		s = adjacent('(', '<%', '( pyQuickTags(r"""', s)
 		
-		s = s.replace('<%', 'print utags(training_wheels_bit_slower_to_remove(r"""')
+		s = s.replace('<%', 'print pyQuickTags(r"""')
 #		s = s.replace('%%>', ')'+uni_str )    # UNCOMMENT POINT *C* (uncomment the FIRST comment hash tag for the remove unicode operation)      # to remove quick workaround, remove this line
 		
 		if(option_auto_trailing_backslash_doubleit): # an alternative to the algorithm2 solution that (resolves it by adding a trailing backslash) is 
-			s = s.replace('%>','"""))')              # to simply add a space to the end of the string at this exact point of the code (that modifies the compiled code only) that somewhat resolves the trailing backslash issue in python triple double quotes 2015.02.08
+			s = s.replace('%>','""")')              # to simply add a space to the end of the string at this exact point of the code (that modifies the compiled code only) that somewhat resolves the trailing backslash issue in python triple double quotes 2015.02.08
 		else:
-			s = s.replace('%>',' """))')     # adds a space 
+			s = s.replace('%>',' """)')     # adds a space 
 
 #		s = s.replace('""")).format (     %:)>', '""").format (   #  %:)> ')    # UNCOMMENT POINT *D* (uncomment the FIRST comment hash tag for the remove unicode operation)     
 		# about the previous line,  to remove quick workaround, remove this line, way to rid one close parenthesis, with the happy face keyword created for this purpose , it comments out the keyword %:)> 
@@ -222,5 +224,7 @@ if __name__ == "__main__":  # in the case not transferring data from php, then s
 			sys.exit(1)
 	else:
 		modify_it( file=sys.argv[1] )
+
+		
 
 ### NOTE: DO NOT CHANGE THE TEXT ON THE NEXT LINE!!!!
