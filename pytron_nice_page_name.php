@@ -6,7 +6,7 @@
 //              anywhere within a domain name without having the exact path to the include file
 
 // EDIT THIS, this 
-$project_root = '';			// when '' then it's document root (of domain name)  MUST put a trailing forward slash at the end of project root (should) 
+$project_root = 'test2/';			// when '' then it's document root (of domain name)  MUST put a trailing forward slash at the end of project root (should) 
 							// use either '' (that is empty string) or some_directory/   (not forward slash by itself, i.e.,  '/' )
 							//
 							// set to project root, e.g., project_root = 'test2/';
@@ -489,6 +489,32 @@ PRINTOUT = False	# for print statements used by print_test() to review variables
 
 print_literal = False 
 
+def to_write(file, s):
+	with open(file, 'w') as fp:
+		fp.write(s)					
+
+def findtags(open, close, s):
+	t=[] #list,array,vector...
+	idx=0
+	item =''
+	while(idx != -1):
+	
+		idx = s.find(open, idx)
+		if idx == -1:
+			#print 'break point #1 (open tag)'
+			break;
+			
+		idx2 = s.find(close, idx+1)
+		if idx2 == -1:
+			#print 'break point #2 (close tag)'
+			break;
+			
+		item = s[idx+len(open):idx2]
+		t.append(item) # potential variable name
+		#print 'result(' + item + ')'
+		idx += 1
+		item ='' # reset item
+	return t
                   # utags will return the string with unicode type python quick tags ON as its initial value, by default.
                   # for convenience, the utags is a string object that creates a version of the source code when JavaScript is off as a transition until browser native implementation
 class utags(str): # or unicode_show  ,  whichever is a more appropriate label
@@ -496,6 +522,57 @@ class utags(str): # or unicode_show  ,  whichever is a more appropriate label
 	def unicode_markup(self, bool=True):
 		return self if bool else self.replace('<unicode>', '').replace('</unicode>','')
 
+class Str_fv(str): # to allow text that appear as format variables
+                   # that are not defined in the parameter list of the format method
+
+	def format(self, *args, **kwargs):
+		self  = self.replace('{', '{{').replace( '}', '}}')
+		open  = '{{**{{'
+		close = '}}**}}'
+		var_names = findtags(open, close, self) # potential
+
+		for item in kwargs:
+			for it in var_names:	#lookup after this working...
+				if  item == it:
+					self = self.replace(	open+item+close ,  (open+item+close).replace(open, '{').replace(close, '}'  ) )
+					continue
+		#print self
+		#to_write('str_fv_txt.py', self) # error checking
+		
+		return     str( self ).format(*args, **kwargs)  # note:  .format method converts  {{ to {
+	
+	#nice
+	def to_write(self, file):
+		with open(file, 'w') as fp:
+			fp.write(self)
+
+			
+class pyQuickTags(str):
+	
+	str_fv = Str_fv()
+	
+	def __init__(self, v):        # optional
+		#v = v.replace('{', '{{').replace('}', '}}').replace('{{**{{', '{').replace('}}**}}', '}')
+		#self = v         
+		#print self
+		self.str_fv = Str_fv(v)
+	
+	
+	def format(self, *args, **kwargs):
+		#print 'hello out there'
+	
+		return self.str_fv.format(*args, **kwargs) # or init  str_fv()  at this point
+	
+		#return     str( s ).format(*args, **kwargs)  # commented out
+	
+	def to_print(self):
+		print self
+		
+	def to_write(self, file):
+		with open(file, 'w') as fp:
+			fp.write(self)
+
+	
 def console_log_function():
 	return <%
      /**
@@ -576,10 +653,7 @@ def rawstringify_outerquote(s):
 def mod_dt(file):
 	return time.strftime("%Y%m%d%H%M%S",time.localtime(os.path.getmtime(file)));
 	
-def to_write(file, s):
-	with open(file, 'w') as fp:
-		fp.write(s)					
-					
+
 def print_test(s):
 	global PRINTOUT
 	if (PRINTOUT):
@@ -745,7 +819,7 @@ def domain_name(s):
 def training_wheels_bit_slower_to_remove(s): # recommend: to remove this function for production code and edit code as required
                                              # just chose an arbitrary tag to represent the python format variables, works nicely, for now
 	return s.replace('{', '{{').replace('}', '}}').replace('{{**{{', '{').replace('}}**}}', '}')
-
+ 
 # test example, don't forget to have php.exe and php5ts.dll in PATH
 width = 100
 height = 100	
@@ -803,23 +877,22 @@ jQuery.getScript("first.js", function() {
 
 <br>
 
+{**{    var    }**}
+
 </body>
 </html>
 
-	
+     
 
-%>.format (   #  %:)>    # UNCOMMENT POINT *A* (uncomment the FIRST comment hash tag for the remove unicode operation   # the arbitrary find string is exactly this 20 characters long, quick workaround to subtract a parenthesis keyword operator # happy face keyword to rid a frown ( removes a close parenthesis ) (an arbitrary keyword created to remove one text character)
-	# variables used
-	top_content = top_content(),
-	mid_content = mid_content(),
-	end_content = end_content(),
-	php_test    = php(code),  # just testing, remove if coding anything serious
-	
-	domain      = domain_name(name) # or something like whether a mobile device,
-                                     # resolution information, etc. to select which css that fits	
-
-
-) # %%>    # UNCOMMENT POINT *B* (uncomment the FIRST comment hash tag for the remove unicode operation)                                           
+%>.format ( # %:)> # UNCOMMENT POINT *A* (uncomment the FIRST comment hash tag for the remove unicode operation # the arbitrary find string is exactly this 20 characters long, quick workaround to subtract a parenthesis keyword operator # happy face keyword to rid a frown ( removes a close parenthesis ) (an arbitrary keyword created to remove one text character)
+# variables used
+top_content = top_content(),
+mid_content = mid_content(),
+end_content = end_content(),
+php_test = php(code), # just testing, remove if coding anything serious
+domain = domain_name(name) # or something like whether a mobile device,
+# resolution information, etc. to select which css that fits
+) # %%> # UNCOMMENT POINT *B* (uncomment the FIRST comment hash tag for the remove unicode operation)
 
 # PHP test: {**{php_test}**}
 # <br>{**{testing_output}**}<br>
@@ -915,6 +988,7 @@ if __name__ == "__main__":  # in the case not transferring data from php, then s
 
 ### NOTE: DO NOT CHANGE THE TEXT ON THE NEXT LINE!!!!
 # START PRE PROCESSOR.PY WRITE OUTPUT #
+
 
 import sys
 import re
@@ -1021,20 +1095,21 @@ def algorithm(s, tw, uni_val=str(True) ):
 	uni_str = '.unicode_markup('+uni_val+')'
 	
 	if (tw):
-
-		s = s.replace('return <%', 'return utags(training_wheels_bit_slower_to_remove(r"""')
-		s = s.replace('= <%', '= utags(training_wheels_bit_slower_to_remove(r"""')
+			#pyQuickTags now contains utags object, str_fv object, etc.
+		
+		s = s.replace('return <%', 'return pyQuickTags(r"""')
+		s = s.replace('= <%', '= pyQuickTags(r"""')
 		
         # note adjacent function for any number of spaces between ( and <%
-		s = adjacent('(', '<%', '( utags(training_wheels_bit_slower_to_remove(r"""', s)
+		s = adjacent('(', '<%', '( pyQuickTags(r"""', s)
 		
-		s = s.replace('<%', 'print utags(training_wheels_bit_slower_to_remove(r"""')
+		s = s.replace('<%', 'print pyQuickTags(r"""')
 #		s = s.replace('%%>', ')'+uni_str )    # UNCOMMENT POINT *C* (uncomment the FIRST comment hash tag for the remove unicode operation)      # to remove quick workaround, remove this line
 		
 		if(option_auto_trailing_backslash_doubleit): # an alternative to the algorithm2 solution that (resolves it by adding a trailing backslash) is 
-			s = s.replace('%>','"""))')              # to simply add a space to the end of the string at this exact point of the code (that modifies the compiled code only) that somewhat resolves the trailing backslash issue in python triple double quotes 2015.02.08
+			s = s.replace('%>','""")')              # to simply add a space to the end of the string at this exact point of the code (that modifies the compiled code only) that somewhat resolves the trailing backslash issue in python triple double quotes 2015.02.08
 		else:
-			s = s.replace('%>',' """))')     # adds a space 
+			s = s.replace('%>',' """)')     # adds a space 
 
 #		s = s.replace('""")).format (     %:)>', '""").format (   #  %:)> ')    # UNCOMMENT POINT *D* (uncomment the FIRST comment hash tag for the remove unicode operation)     
 		# about the previous line,  to remove quick workaround, remove this line, way to rid one close parenthesis, with the happy face keyword created for this purpose , it comments out the keyword %:)> 
@@ -1139,13 +1214,16 @@ if __name__ == "__main__":  # in the case not transferring data from php, then s
 	else:
 		modify_it( file=sys.argv[1] )
 
+		
+
 ### NOTE: DO NOT CHANGE THE TEXT ON THE NEXT LINE!!!!
 # END PRE PROCESSOR.PY WRITE OUTPUT #
 		
 
 ### NOTE: DO NOT CHANGE THE TEXT ON THE NEXT LINE!!!!
 # START SIMPLE PREPROCESSOR AUTO PRINT LITERAL.PY WRITE OUTPUT #
-		
+
+
 # This begins the file simple_preprocessor_auto_print_literal.py
 # this occurs after the initial simple_preprocessor.py step
 # 
@@ -1179,7 +1257,7 @@ def process(lines):
 		
 		# the idea is     if ( '<%' in line and '%>' in line  )   # due to it already being converted to triple double quoted a raw string literal string
 		# but because pre_processor.py runs first, therefore its the following:
-		if ( '( utags(training_wheels_bit_slower_to_remove(r"""' in line and '""")' in line ):		# therefore, presuming that quick tags are being used
+		if ( '( pyQuickTags(r"""' in line and '""")' in line ):		# therefore, presuming that quick tags are being used
 			out += line                             # therefore, not automatically adding r, already done
 			continue
 		
