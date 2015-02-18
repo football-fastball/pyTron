@@ -235,7 +235,7 @@ function double_forwardslash_warning_count($arr){
 	$count = 0;
 	foreach ($arr as $value){
 		//print 'path='.$value . ' ------ ' .  findcount('//', $value) . '<br>';
-		$count += findcount2('//', $value);
+		$count += findcount('//', $value);
 	}
 	return $count;
 }
