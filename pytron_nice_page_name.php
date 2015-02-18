@@ -1,6 +1,6 @@
-<?php
+<?php  
 /* the page is the same name as the .py page */
-
+	
 
 // Description: Directories that use the internal routing of a web browser and allow to include from 
 //              anywhere within a domain name without having the exact path to the include file
@@ -51,46 +51,114 @@ $js_rs_folder   = 'pyjs_rs/'    ;
 // folders will be same name as filename within /pycss  or /pyjs_rs
 // simply include any css or js within those folders
 //  
-
+   
 $compiled_folder = 'COMPILED/'          ;	// MUST INCLUDE TRAILING backslash or forwardslash
 											// use either '' (that is empty string) or some_directory/   (not forward slash by itself, i.e.,  '/' )
 											// when this is '' (its the same as the folder SERVER[DOCUMENT_ROOT] is)
 										
-								
+   								
 $preprocessor_folder = 'PREPROCESSOR/'	;   // MUST INCLUDE TRAILING backslash or forwardslash
 											// in most cases this will be '' (emtpy string), this just means that
 											// the simple_pre_processor.py and literal.py  are placed in 
 											// the same folder as defined by    project root
 											// The preprocessor FILES contained within this folder
-										
+			
+			
+$document_root = gets_document_root_with_trailing_fs();
+
+function icheck_run_all($s){
+	$s=icheck_run1($s);
+	$s=icheck_run2($s);
+	$s=icheck_run3($s);
+	return $s;
+}									
+function icheck_run1($s){return b2f($s); }
+function icheck_run2($s){return (substr($s, -1) == '/') ? $s : $s . '/'; }
+function icheck_run3($s){return ($s=='.' || $s=='./' || $s=='.\\' || $s=='/' || $s=='\\') ? '' : $s; } // current working directory should be  '' (recommended, therefore this line not needed)  (perhaps needed if you insist on ./  or . as cwd)
+
+print '<h1>Before sanitizing check</h1>';
+$arr[]=$document_root;	//note:  array_push($arr, 'hello world'); different syntax in next lines, its same to add to arrays , initialize first either with $arr=[] or $arr=array();
+$arr[]=$project_root;
+$arr[]=$compiled_folder;
+$arr[]=$preprocessor_folder;
+$arr[]=$css_folder;
+$arr[]=$js_rs_folder;
+
+integrity_check_count($arr);
+$array = array(
+	'document_root' => $document_root, 
+	'project_root' => $project_root, 
+	'compiled_folder' => $compiled_folder,
+	'preprocessor_folder' => $preprocessor_folder,
+	'css_folder' => $css_folder,
+	'js_rs_folder' => $js_rs_folder
+);
+foreach ($array as $key => $value) { echo "$key = $value\n"; }
+//foreach($arr as $item){ print 'var='.$item.'<br>'; }
+
+// Sanitizes
+$document_root           = icheck_run_all( gets_document_root_with_trailing_fs() );
+$project_root            = icheck_run_all( $project_root );
+$compiled_folder         = icheck_run_all( $compiled_folder );
+$preprocessor_folder     = icheck_run_all( $preprocessor_folder );
+$css_folder              = icheck_run_all( $css_folder );
+$js_rs_folder            = icheck_run_all( $js_rs_folder );
+// next two lines are calculated directories, depend on sanitized variables
+$flex_folders            = icheck_run_all( all_folders_after_project_root_until_index($project_root) );
+$sources_magic_directory = icheck_run_all( abs_project_root($project_root) . $compiled_folder . $flex_folders );
+
+
+print '<h1>After sanitizing</h1>';
+$arr2[]=$document_root;
+$arr2[]=$project_root;
+$arr2[]=$compiled_folder;
+$arr2[]=$preprocessor_folder;
+$arr2[]=$flex_folders;
+$arr2[]=$sources_magic_directory;
+$arr2[]=$css_folder;
+$arr2[]=$js_rs_folder;
+$arr2[]=$flex_folders;
+$arr2[]=$sources_magic_directory;
+integrity_check_count($arr2);
+
+$array2 = array(
+	'document_root' => $document_root, 
+	'project_root' => $project_root, 
+	'compiled_folder' => $compiled_folder,
+	'preprocessor_folder' => $preprocessor_folder,
+	'flex_folders' => $flex_folders,
+	'sources_magic_directory' => $sources_magic_directory,
+	
+	'css_folder' => $css_folder,
+	'js_rs_folder' => $js_rs_folder
+);
+foreach ($array2 as $key => $value) { echo "$key = $value\n"; }
+//foreach($arr2 as $item){ print 'var='.$item.'<br>'; }
 
 
 
-$arr = array( &$include_folder, &$css_folder, &$js_rs_folder, &$project_root, &$compiled_folder, &$preprocessor_folder);
-integrity_check_count($arr); // read only, counts only
 
-// Intregrity Checks			// can be removed if certain conditions of variables are met
-foreach ($arr as &$value) {
 
-// check #1
-    $value = b2f($value);   // when you are certain you will not use backslashes, simply comment these lines out!!
-							// when you are certain that your folders contain a trailing forwardslash, simply comment this statement out!!
-// check #2				
-//             condition             ? when true : when false
-$value = (substr($value, -1) == '/') ? $value    :  $value . '/';  // when you are certain that you have put a forwardslash at the end of a folder, simply comment this statement out!!
-// description: condition asks , does it end with a forwardslash
 
-// check #3
-$v = $value;					
-if ($v == '.' ||  $v == './' ||  $v == '.\\' || $v == '/' || $v == '\\') { $value = ''; }  // current working directory should be  '' (recommended, therefore this line not needed)  (perhaps needed if you insist on ./  or . as cwd)
-}
 
-function integrity_check_count($arr) {
-	// Integrity Counts For Display	
+// When verified that icheck_run_all are ok, then be sure that the variables corresponding to functions are still called
+// Note the following variables must be inititalized by functions (uncomment the next three lines then if required modify code as required,preferred):
+
+//	$document_root            = gets_document_root_with_trailing_fs();
+//	$flex_folders             = all_folders_after_project_root_until_index($project_root);
+//	$sources_magic_directory  = abs_project_root($project_root) . $compiled_folder . $flex_folders;
+
+
+// document root   has /           
+// project  root   has / or is ''
+// compiled folder has / or is ''
+// flex     folder has / or is ''
+
+function integrity_check_count($arr) {	// initial variables of program
+										// Integrity Counts For Display	
 	$backslash_conversions       = 0;
 	$cwd_coversions              = 0;
 	$double_forwardslash_warning = 0;
-
 	$trailing_fowardslash_required_when_not_cwd_conversion = 0;
 
 	$backslash_conversions       = backslash_conversions_count($arr);
@@ -99,21 +167,25 @@ function integrity_check_count($arr) {
 	$trailing_fowardslash_conversion = adds_trailing_fowardslash_when_not_cwd_count($arr, True); // trailing_fowardslash_required_when_not_cwd_conversion
 																								 // remove the True parameter if you prefer using . as your cwd 
 	print '<pre>';  // anyway, inner pre tags are when outer pre tags are not used, no affect when using pre tags twice on text	(i.e., can remove inner pre tags when using outer pre tags)														 
-	print '<h1> Integrity checks (0 is better for each) (cwd and double forwardslash perhaps are ok (depending on preference or situation)) </h1><br>';
-	print '<b> backslash conversions issues (errors): <pre style="display:inline">( '.$backslash_conversions.' )</div></b><br>';
-	print '<b> trailing forwardslash missing, conversions issues (errors): <pre style="display:inline">( '.$trailing_fowardslash_conversion.' )</div></b><br>';
+	print '<h1 style="font-size: 125%;">Integrity checks (0 is better for each) (cwd and double forwardslash perhaps are ok (depending on preference or situation))</h1>';
+	print '<b> Backslash conversions issues (errors): <pre style="display:inline">( '.$backslash_conversions.' )</pre></b><br>';
+	print '<b> Trailing forwardslash missing, conversions issues (errors): <pre style="display:inline">( '.$trailing_fowardslash_conversion.' )</pre></b><br>';
 	print '<b> cwd conversions = <pre style="display:inline">( '.$cwd_coversions.' )</div> </b><br>';
-	print '<b> double forwardslash potential warnings: <pre style="display:inline">( '.$double_forwardslash_warning.' )</div> </b><br>';
+	print '<b> Double forwardslash potential warnings: <pre style="display:inline">( '.$double_forwardslash_warning.' )</pre> </b><br>';
 	print '</pre>';
 	print '<br>';
 }
+
+
+
+
 
 function adds_trailing_fowardslash_when_not_cwd_count($arr, $include_cwd_warnings = false) {
 	
 	$count = 0;
 	
 	foreach($arr as $value) {
-		
+		//print 'directory=' . $value . '<br>';
 		if ($include_cwd_warnings)
 			if ($value == '.')
 				$count++;
@@ -157,29 +229,48 @@ function cwd_varieties($arr){
 	return $count;
 }
 
+
 function double_forwardslash_warning_count($arr){
-	
+	print '<br>';
 	$count = 0;
 	foreach ($arr as $value){
-		$t = str_replace ( '', '//'  , $value);
-		$count +=   ( (strlen($value) - strlen($t)) / 2  );
+		//print 'path='.$value . ' ------ ' .  findcount('//', $value) . '<br>';
+		$count += findcount2('//', $value);
 	}
 	return $count;
 }
 
-//function document_root_getcwd($s) {	return (b2f($s) == $_SERVER["DOCUMENT_ROOT"]) ? '' : '/' ; }
+
+// directory that seems to not be just / i.e., dir/
+function gets_document_root_with_trailing_fs(){ // ensures,guarentees trailing forward slash
+	//print (substr($_SERVER["DOCUMENT_ROOT"], -1) == '/') ? $_SERVER["DOCUMENT_ROOT"] . '  document_root trailing forwardslash':$_SERVER["DOCUMENT_ROOT"] . '/' .'  no tfs, therefore just added it'.'<br>';
+	return $_SERVER["DOCUMENT_ROOT"] .'/';	// integrity checks can verify, and add the forward slash
+}
 
 function abs_project_root($directory_of_project_root) {
 	
-	return b2f($_SERVER["DOCUMENT_ROOT"] .'/'. $directory_of_project_root) ;
+	//return  b2f($_SERVER["DOCUMENT_ROOT"] .'/'. $directory_of_project_root) ;
+	return   b2f(   gets_document_root_with_trailing_fs() . $directory_of_project_root) ;
 }
 
-function all_folders_after_project_root_until_index($project_root) {  // relative to where the index.php is
-
-		$b = getcwd();
-		$all_after_root  = b2f(  substr( $b, strlen( $_SERVER["DOCUMENT_ROOT"] )+1, strlen($b) )  );
+												// document_root, project_root
+function all_folders_after_project_root_until_index($project_root) { // depends on where index.php is
 		
-		return substr( $all_after_root , strlen($project_root), strlen( $all_after_root ) ) . '/';
+		
+		$b = getcwd(); // of the file
+		//$all_after_root  = b2f(  substr( $b, strlen( $_SERVER["DOCUMENT_ROOT"] )+1, strlen($b) )  );
+		$all_after_root  = b2f(  substr( $b, strlen(gets_document_root_with_trailing_fs()) )  );
+		
+		$var = substr( $all_after_root , strlen($project_root) )     . '/'  ;
+		
+		// NOTE: the solution.
+		// if not added to integity check tweak, this MUST be the solution ! (better to have in integerity check tweak though)  
+		if ($var == '/')	// sort of a pseudo-all folders third root, therefore same algorithm # update-fix: 2015.02.17
+		$var = '';			// reminder:  when /  therefore ''  
+							// thus there are no middle folders between (document root + project root) and the index.php
+							// integrity check would also resolve it by adding the forwardslash when required
+	
+		return  $var  ;
 }
 
 
@@ -218,6 +309,21 @@ function to_write($file, $s){
 	file_put_contents($file, $s); 
 }
 
+function findcount2($item, $s){ // to test, not using
+	$idx  =0;
+	$count=0;
+	$lenit=strlen($item);
+	while ($idx != -1) {
+		$idx = strpos($s, $item, $idx);
+		if ($idx != -1)
+			$count++;
+		$idx += $lenit +1; 
+	}
+	return $count;
+}
+
+function pysplit($item, $s)  { return explode( $item, $s);               }
+function findcount($item, $s){ return count( pysplit ( $item, $s ) ) -1; } // note  -1 to subtract string itself
 // backslash to forward-slash
 function b2f($s) { return (str_replace('\\','/',$s)); } // optional on some OS environments, for platform independence
 function to_read($file) { return file_get_contents($file) ; }
@@ -225,7 +331,9 @@ function contains ($needle, $haystack) { return strpos($haystack, $needle) !== f
 function php_string_slicing($start, $end, $s) { return substr ($s,$start,$end - $start); }// yet_to_be_added
 function underscore_to_space($s) { return str_replace(  '_' , ' ' , $s ); } // str_replace($old,$new,$s)
 function raise($s) { return strtoupper ($s); }
-function str_bool($s){ return ( ($s) ? 'True' : 'False'); };
+function lower($s) { return strtolower ($s); }
+function str_bool($s){ return ( ($s) ? 'True' : 'False'); }
+function upper($s) { return strtoupper ($s); }
 function without_file_extension($s) { return substr($s, 0, strrpos($s, ".")); } // without . and file extension
 function right($str, $length) {return substr($str, -$length);  }
 
@@ -354,7 +462,8 @@ if (not($done) ) {
 
 	$u = get_string_tag_to_tag($s, 	'#_START_PRE_PROCESSOR.PY_WRITE_OUTPUT_#',
 					'#_END_PRE_PROCESSOR.PY_WRITE_OUTPUT_#');
-									
+	
+
 	$var = 'simple_preprocessor.py';
 	if (not (file_exists($var))){
 		to_write( abs_project_root($project_root) . $preprocessor_folder . $var , $u );
@@ -420,12 +529,20 @@ if (not($done) ) {
 }
 
 
-	$flex_folders = all_folders_after_project_root_until_index($project_root );  //This function is commented out because 
+	
+
+	// previously was defining flex_folders and sources_magic_directory here though now near top for integrity check
+	// and therefore the # update-fix: 2015.02.17 in the function all_folders_after_project_root_until_index now commented out is instead done by the integrity check (a bit better imo)
+
+	// NOTE:    sources_magic_directory is created near at the beginning of the program due to it being a pseudo-third root (the other two being document_root and project_root)
+	// note: sources_magic_directory a concatonation of document_root , project_root , and flex,dynamic_folders
+	print '<br><br>SHOULD HAVE A TRAILING SLASH result  (' .  $sources_magic_directory  . ')<br><br>'; // third pseudo-root
 		
-	print '<br><br>SHOULD HAVE A TRAILING SLASH result=(' .  $flex_folders  . ')<br><br>';
-		
-	// NOTE: magic...
-	$sources_magic_directory_compiled = abs_project_root($project_root) . $compiled_folder . $flex_folders . $compiled;
+	$sources_magic_directory_compiled =  $sources_magic_directory . $compiled;		// *_compiled.py
+	
+	// tmp
+	//$dir_contents_what = abs_project_root($project_root) . $compiled_folder . $flex_folders ;
+	//echo '<br>what is this directory, checking... <pre style="display:inline;"> (  ' . $dir_contents_what . '  )</pre><br>';
 	
 	
 	if ( not( is_compiled($source, $sources_magic_directory_compiled ) ) ) {
