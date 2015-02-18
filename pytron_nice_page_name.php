@@ -235,7 +235,7 @@ function double_forwardslash_warning_count($arr){
 	$count = 0;
 	foreach ($arr as $value){
 		//print 'path='.$value . ' ------ ' .  findcount('//', $value) . '<br>';
-		$count += findcount('//', $value);
+		$count += findcount('//', $value);  // substr_count($string, $sub);
 	}
 	return $count;
 }
@@ -294,8 +294,6 @@ $ret2 = 'WIDE'; // B
 return $ret1;
 }
 
-function not($s){return !$s;}
-
 function to_write($file, $s){ 
 	
 	$filename = basename($file);
@@ -309,18 +307,46 @@ function to_write($file, $s){
 	file_put_contents($file, $s); 
 }
 
-function findcount2($item, $s){ // to test, not using
-	$idx  =0;
-	$count=0;
-	$lenit=strlen($item);
-	while ($idx != -1) {
-		$idx = strpos($s, $item, $idx);
-		if ($idx != -1)
-			$count++;
-		$idx += $lenit +1; 
+function findcount2($item, $s){ // tested, works, not using for now
+	$idx    =0;
+	$count  =0;
+	$lenit  =strlen($item);	
+	$slength=strlen($s);
+
+	while ( $idx !== false ) {
+		
+		if ($idx > $slength)
+			break;
+		
+		$idx = strpos($s, $item, $idx);	
+		if ($idx === false)
+			break;
+		
+		$count++;
+		$idx += $lenit;
 	}
 	return $count;
 }
+
+function not($s){return !$s;}
+function findcount3($item, $s){ // works too, not using at this time
+	$idx    =0;
+	$count  =0;
+	$lenit  =strlen($item);	
+	$slength=strlen($s);
+	while ($idx !== false) {
+		if ( not ($idx < $slength) ){
+		break;}
+		$idx = strpos($s, $item, $idx);
+		if ($idx === false){
+		break;}		
+		$count++;
+		$idx += $lenit;
+	}
+	return $count;
+}
+
+//function findcount ($item, $s) { return substr_count($s, $item); } //works
 
 function pysplit($item, $s)  { return explode( $item, $s);               }
 function findcount($item, $s){ return count( pysplit ( $item, $s ) ) -1; } // note  -1 to subtract string itself
