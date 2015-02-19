@@ -33,7 +33,7 @@ Later versions of pyTron will automatically determine whether the source has bee
 
 2015.02.18
 Added a feature to display source code from a file.  Also refactored source code to remove a dependency on a preprocessor that was in a test phase to ensure reliability and that the feature affected by the code removal has similar features that also exist automatically with using python quick tags <% %> and can simply code the raw string literal, r""" """ as needed to your liking. 
-The example page output by the .php file now displays how to display source code with pre tags with the exact same newlines as in the source code .py file, and an example of html automatically wrapping text (as it usually does) with pre tags and css style to wrap a block of text (without the use of several <br> tags), neat.  
+The example page output by the .php file now displays how to display source code with pre tags with the exact same newlines as in the source code .py file, and an example of html automatically wrapping text (as it usually does) with pre tags and css style to wrap a block of text (without the use of several <br> (br) html tags), neat.  
 
 2015.02.18
 Added several features including a .htmlentities method for many purposes to display text, e.g., it now supports the display of source code as text for python quick tag strings <% %> as improved wysiwyg (what you see is what you get) text strings. 
