@@ -170,7 +170,7 @@ function integrity_check_count($arr) {	// initial variables of program
 	print '<h1 style="font-size: 125%;">Integrity checks (0 is better for each) (cwd and double forwardslash perhaps are ok (depending on preference or situation))</h1>';
 	print '<b> Backslash conversions issues (errors): <pre style="display:inline">( '.$backslash_conversions.' )</pre></b><br>';
 	print '<b> Trailing forwardslash missing, conversions issues (errors): <pre style="display:inline">( '.$trailing_fowardslash_conversion.' )</pre></b><br>';
-	print '<b> cwd conversions = <pre style="display:inline">( '.$cwd_coversions.' )</div> </b><br>';
+	print '<b> cwd conversions = <pre style="display:inline">( '.$cwd_coversions.' )</pre> </b><br>';
 	print '<b> Double forwardslash potential warnings: <pre style="display:inline">( '.$double_forwardslash_warning.' )</pre> </b><br>';
 	print '</pre>';
 	print '<br>';
@@ -1045,7 +1045,8 @@ jQuery.getScript("first.js", function() {
 
 </head>
 <body>
-Saying Hello World To Everybody!
+<br><br><br>
+<b>Saying Hello World To Everybody!</b>
 <div id="container">
 
 <div id="top">{**{top_content}**}</div>
@@ -1072,32 +1073,42 @@ PHP test: {**{php_test}**}
 <unicode>hello world</unicode>
 
 
-
-<br><br><br><br>
+<pre style="white-space: pre-wrap;"> (note that this wrap use of pre tags will wrap its text)
 
 <b>Any Characters permissible within python quick tags &lt;% %&gt; (strings), neat</b>
 
-Though this to note:
+Though this to note:<br>
 &lt;% %&gt; , allows quick tags between quick tags though must be in html entities form
 
+
 ''' triple single quotes allowed also '''
+
 """ triple double quotes now allowed within python quick tags, feature added 2015.02.08 """
 
+</pre>
 
 <h1>Example Of Displaying Source Code</h1>
-{**{source_variable}**}  This format variable (see your_page.py) is processed, it's converted to htmlentities
+<pre>{**{source_variable}**}</pre>    (Note that to display source code with the same newlines as in the source code, it should be wrapped in pre tags without the css style wrapping of text as in the examples before and after the display of this source code)
+
+
+<pre style="white-space: pre-wrap;">
+This format variable (see your_page.py) is processed, it's converted to htmlentities
 feature added to pyQuickTags to htmlentities any python quick tags &lt;% %&gt; (string) (Note: only python quick tag &lt;% %&gt; strings MUST be converted, the rest optional for display purposes), feature added 2015.02.17
+
+
 (Note: To not .htmlentities the contents of the page itself within the &lt;head&gt;&lt;/head&gt; section of html tags, javascript between python quick tags &lt;% %&gt; , etc. ) 
+
 (htmlentities can be used for many purposes, such as to display source code blocks of code)
 
 quick way to html entities a string {**{example_htmlentities_string}**}
 
 While still compatible with being able to use python format variables,
+
 {**{ python quick tags format variable now as wysiwyg text when undefined in format method parameters, feature added 2015.02.16 }**}
 
 
 {**{     var    }**}
-
+</pre>
 
 %>.format (   #  %:)>    # UNCOMMENT POINT *A* (uncomment the FIRST comment hash tag for the remove unicode operation   # the arbitrary find string is exactly this 20 characters long, quick workaround to subtract a parenthesis keyword operator # happy face keyword to rid a frown ( removes a close parenthesis ) (an arbitrary keyword created to remove one text character)
 	# variables used
