@@ -5,6 +5,7 @@ import sys
 from subprocess import PIPE, Popen, STDOUT
 import time
 import ast
+import uuid
 
 same_file = False	# is True or False , gets value from PHP (global or make App class due to        # Note, 2015.02.02: same_file set to True not recommended
                         # global variables frowned upon, i.e., not best practices)                   # because of the note comment explained in index.php
@@ -14,11 +15,7 @@ PRINTOUT = False	# for print statements used by print_test() to review variables
 					# triple quoted string can still be used, but not between print pyQuickTags(r""" and """) because they represent triple double quotes, and that would be
 					# triple double quotes within triple double quotes (quotes within TDQ need to be escaped with the backslash)
 
-print_literal = False 
-
-def to_write(file, s):
-	with open(file, 'w') as fp:
-		fp.write(s)					
+print_literal = False
 
 def findtags(open, close, s):
 	t=[] #list,array,vector...
@@ -42,6 +39,7 @@ def findtags(open, close, s):
 		idx += 1
 		item ='' # reset item
 	return t
+	
                   # utags will return the string with unicode type python quick tags ON as its initial value, by default.
                   # for convenience, the utags is a string object that creates a version of the source code when JavaScript is off as a transition until browser native implementation
 class utags(str): # or unicode_show  ,  whichever is a more appropriate label
@@ -88,18 +86,45 @@ class pyQuickTags(str):
 	def format(self, *args, **kwargs):
 		#print 'hello out there'
 	
-		return self.str_fv.format(*args, **kwargs) # or init  str_fv()  at this point
+		return pyQuickTags(self.str_fv.format(*args, **kwargs)) # or init  str_fv()  at this point 
 	
+
 		#return     str( s ).format(*args, **kwargs)  # commented out
+		#return super(pyQuickTags, self ).lower().format(*args, **kwargs)  # commented out
+		# note, can wrap the super(pyQuickTags, self ) in a function e.g., something(super(str_fv, self )).format(*args, **kwargs)
+		# or call an additional method as .lower does, etc.
 	
-	def to_print(self):
-		print self
+	
+	def htmlentities(self):
+		salt = uuid.uuid4().hex
+		s = self.replace('&quot;&quot;&quot;', '*QUOT-*-QUOT-*-QUOT*'+salt);
+		
+		# tabs on blank newlines issue : solved 2015-02-19
+		t = s.splitlines()
+		u =''
+		for line in t:
+			if line.rstrip() == '':
+				u += '\n'
+			else:
+				u = u + line + '\n'
+		u = '\n' + u.strip() + '\n'
+		
+		code_init = pyQuickTags(r""" echo htmlentities('%s'); """)  %  u.replace('\\','\\\\').replace("'", "\\'")    # or using quick tags works too    r"""  """  for a tiny speed up or perhaps when testing a new feature
+		var = php(code_init)
+		var = var.replace('*QUOT-*-QUOT-*-QUOT*'+salt, '&quot;&quot;&quot;')
+		var = var.replace( '&amp;lt;%' , '&lt;%' ).replace( '%&amp;gt;', '%&gt;' ) # perhaps salt quick tags too
+		
+		#return var # this ok, perhaps to wrap return with pyQuickTags() to then allow another method call
+		
+		return pyQuickTags(var)
+	
+	#def to_print(self):  # one point of print out at this time, reduces complexity, simplier
+	#	print self
 		
 	def to_write(self, file):
 		with open(file, 'w') as fp:
-			fp.write(self)
-
-	
+			fp.write(self)	
+			
 def console_log_function():
 	return pyQuickTags(r"""
      /**
@@ -164,8 +189,8 @@ JSCODE;
      } # end logConsole
 //echo( ' <br> {**{hello}**} <br>');	 
 //echo( '{**{howdy}**}');
-""").format (  hello='hello world', howdy='very well thanks' )
-
+""").format (  hello='hello world', howdy='very well thanks' )			
+			
 def rawstringify_outerquote(s):
     for format in ["r'{}'", 'r"{}"', "r'''{}'''", 'r"""{}"""']:
         rawstring = format.format(s)
@@ -180,7 +205,10 @@ def rawstringify_outerquote(s):
 def mod_dt(file):
 	return time.strftime("%Y%m%d%H%M%S",time.localtime(os.path.getmtime(file)));
 	
-
+def to_write(file, s):
+	with open(file, 'w') as fp:
+		fp.write(s)					
+					
 def print_test(s):
 	global PRINTOUT
 	if (PRINTOUT):
@@ -253,9 +281,9 @@ def execfile_fix(file): # workaround, due to execfile not working (as i'd like i
 
 file_to_include = 'include.py'
 # including this way due to execfile does not including a file within a def,function as I expected
-###############execfile(include_quick_tags_file(file_to_include))	# this functin used to include each python file with quick tags		 
+#execfile(include_quick_tags_file(file_to_include))	# this functin used to include each python file with quick tags		 
 
-# commented out include file at this time !!
+
 # NOTE: include section of source code with two entries due to workaround needed for execfile def,function
 #execfile(include_quick_tags_file(file_to_include))
 #execfile_fix(file_to_include) # when same file format is used, post_procesor.py (not used when using different file format)
@@ -309,29 +337,78 @@ def php(code): # shell execute PHP from Python (that is being called from php5_m
 		pass
 	return o
 
+	
+def source_code_from_file():
+	
+	source='' 
+	with open(r'C:\www\source_code.git\progress\app.py', 'r') as fp:   # or .cpp .php  etc.
+		source = fp.read()
+	
+	return pyQuickTags(r"""
+	 
+	{**{source_to_make_html_entities}**}
+	
+""").format( source_to_make_html_entities = source ).htmlentities()	
+	
+	
+	
+def source_code():   # note, this is just source code print to display, not the entire page of the function output prints to the web browser, screen
+	return pyQuickTags(r"""
+<html>
+</head>
+<script type="text/javascript">
+	alert('hello world');
+	// when using jquery then the next line
+	//$(document).ready(function() {
+		//console.log( "ready!" );
+		//alert('hello world');
+	//});
+</script>
+
+</head>
+<body>
+<h1>hello world</h1>
+<br>
+page contents here
+and more of the website too
+<b>have a great day!</b>
+<br>
+</body>
+</html>
+	
+""").htmlentities()
+	
 def top_content():
     
-	print_wwwlog(r'''I am at " the top " content''' ) # NOTE: better to use triple single quotes , best to put a space before and after a triple quoted string (though not necessary for triple SINGLE quotes)
+	print_wwwlog( '''I am at " the top " content''' ) # NOTE: better to use triple single quotes , best to put a space before and after a triple quoted string (though not necessary for triple SINGLE quotes)
 	                                                  # (the open and close quick tags (< % % > with no spaces) to denote a 
                                                       # triple double quoted string ONLY for return and assignment statements at this time) 
                                                       # due to a space needed before closing parenthesis 
                                                       # when using triple DOUBLE quotes (no restriction with triple SINGLE quotes by you, the programmer)
 	# at this time, one or no spaces between open parenthesis and open quick tag (no resriction on the close python quick tag as far as spaces around it)
 	print_wwwlog ( pyQuickTags(r""" example of new feature using quick tags between parenthesis """) )
-	return 'header'
 	
-# r''' '''  can be used anywhere 
-
+	return ' pyTron    @    www.pytron.us '
+	
 def mid_content():
 
-	print_wwwlog( pyQuickTags(r"""    """)  )  # TWO SMALL CASES TO ESCAPE WITH RAW STRING LITERALS, a backslash before a single quote or double quote 
+	print_wwwlog( r'''I am " at """" \'\'\'\'\'\'\'{}{}{}{} {{{{ }}}} the middle content \a\1\2\3\4\5\6\7\8\9\b\f\v\r\n\t\0\x0B
+	
+	
+I have denoted newlines within a raw string , sent to the web browser that also interprets as newlines
+And saving the file also is fine.
+
+<br>
+<br>
+hello world  (but html characters are not interpreted this way)
+'''    )  # TWO SMALL CASES TO ESCAPE WITH RAW STRING LITERALS, a backslash before a single quote or double quote 
           # (depending what are the outer quotes) and if the intent is to have a backslash at the end of a string, need two of them
 
 	return pyQuickTags(r"""
 	
+This is a test, <br>it is actually within a triple double quoted string
 {**{testing}**}
-
-""").format( testing = 'hello world' )
+""").format( testing = 'HELLO WORLD(testing)' )
 	
 def end_content():
 	return 'footer'
@@ -342,17 +419,20 @@ def domain_name(s):
 		return 'us'
 	elif(s == 'WIDE'):
 		return 'com'
-		
+
+# no longer using due to pyQuickTags class,object replaces this function
 def training_wheels_bit_slower_to_remove(s): # recommend: to remove this function for production code and edit code as required
                                              # just chose an arbitrary tag to represent the python format variables, works nicely, for now
 	return s.replace('{', '{{').replace('}', '}}').replace('{{**{{', '{').replace('}}**}}', '}')
- 
+
 # test example, don't forget to have php.exe and php5ts.dll in PATH
 width = 100
-height = 100	
+height = 100
 code = pyQuickTags(r"""
-echo ('   &quot;&quot;&quot; + str(width) + &quot;&quot;&quot;, &quot;&quot;&quot; + str(height) + &quot;&quot;&quot;  ');
-""")
+
+echo ('   {**{php_width}**}, {**{php_height}**}  ');
+
+""").format( php_width = str(width) , php_height = str(height) )
 
 # Note, any JavaScript or any other code that contains a curly brace 
 # must double the curly brace when using the python format function with the triple double-quoted string, 
@@ -391,7 +471,8 @@ jQuery.getScript("first.js", function() {
 
 </head>
 <body>
-
+<br><br><br>
+<b>Saying Hello World To Everybody!</b>
 <div id="container">
 
 <div id="top">{**{top_content}**}</div>
@@ -402,29 +483,89 @@ jQuery.getScript("first.js", function() {
 
 </div>
 
+
+Note that characters that before needed to be escaped now can be displayed in source code and to the screen will display as text as wysiwyg (what you see is what you get)
+\\a\\1\\2\\3\\4\\5\\6\\7\\8\\9\\b\\f\\v\\r\\n\\t\\0\\x0B
+\a\1\2\3\4\5\6\7\8\9\b\f\v\r\n\t\0\x0B   
+This eases the coding of a webpage to increase productivity while reducing errors.
+It speeds up iteration so you can achive more from your website.
+
 <br>
-
-{**{    var    }**}
-
+PHP test: {**{php_test}**}
 </body>
 </html>
 
-     
 
-""").format ( # %:)> # UNCOMMENT POINT *A* (uncomment the FIRST comment hash tag for the remove unicode operation # the arbitrary find string is exactly this 20 characters long, quick workaround to subtract a parenthesis keyword operator # happy face keyword to rid a frown ( removes a close parenthesis ) (an arbitrary keyword created to remove one text character)
-# variables used
-top_content = top_content(),
-mid_content = mid_content(),
-end_content = end_content(),
-php_test = php(code), # just testing, remove if coding anything serious
-domain = domain_name(name) # or something like whether a mobile device,
-# resolution information, etc. to select which css that fits
-) # %""") # UNCOMMENT POINT *B* (uncomment the FIRST comment hash tag for the remove unicode operation)
+<unicode>hello world</unicode>
 
-# PHP test: {**{php_test}**}
-# <br>{**{testing_output}**}<br>
-# <unicode>hello world</unicode>
 
+<pre style="white-space: pre-wrap;"> (note that this wrap use of pre tags will wrap its text)
+
+<b>Any Characters permissible within python quick tags &lt;% %&gt; (strings), neat</b>
+
+Though this to note:<br>
+&lt;% %&gt; , allows quick tags between quick tags though must be in html entities form
+
+
+''' triple single quotes allowed also '''
+
+&quot;&quot;&quot; triple double quotes now allowed within python quick tags, feature added 2015.02.08 &quot;&quot;&quot;
+
+</pre>
+
+<h1>Example Of Displaying Source Code</h1>
+<pre>{**{source_variable}**}</pre>    (Note that to display source code with the same newlines as in the source code, it should be wrapped in pre tags without the css style wrapping of text as in the examples before and after the display of this source code)
+
+
+<pre style="white-space: pre-wrap;">
+This format variable (see your_page.py) is processed, it's converted to htmlentities
+feature added to pyQuickTags to htmlentities any python quick tags &lt;% %&gt; (string) (Note: only python quick tag &lt;% %&gt; strings MUST be converted, the rest optional for display purposes), feature added 2015.02.17
+
+
+(Note: To not .htmlentities the contents of the page itself within the &lt;head&gt;&lt;/head&gt; section of html tags, javascript between python quick tags &lt;% %&gt; , etc. ) 
+
+(htmlentities can be used for many purposes, such as to display source code blocks of code)
+
+quick way to html entities a string {**{example_htmlentities_string}**}
+
+While still compatible with being able to use python format variables,
+
+{**{ python quick tags format variable now as wysiwyg text when undefined in format method parameters, feature added 2015.02.16 }**}
+
+
+{**{     var    }**}
+</pre>
+
+""").format (   #  %:)>    # UNCOMMENT POINT *A* (uncomment the FIRST comment hash tag for the remove unicode operation   # the arbitrary find string is exactly this 20 characters long, quick workaround to subtract a parenthesis keyword operator # happy face keyword to rid a frown ( removes a close parenthesis ) (an arbitrary keyword created to remove one text character)
+	# variables used
+	top_content = top_content(),
+	mid_content = mid_content(),
+	end_content = end_content(),
+	php_test    = php(code),  # just testing, remove if coding anything serious
+	
+	domain      = domain_name(name), # or something like whether a mobile device,
+                                     # resolution information, etc. to select which css that fits	
+
+
+source_variable = source_code_from_file(),
+
+example_htmlentities_string = pyQuickTags(r"""  <p><hello world note p tags output><p>  """).htmlentities() # note, python quick tags stings have .htmlentities method
+
+)
+
+#.htmlentities()
+
+
+#.replace( '&amp;lt;%' , '&lt;%' ).replace( '%&amp;gt;', '%&gt;' )
+
+
+
+# 
+
+ # %""")    # UNCOMMENT POINT *B* (uncomment the FIRST comment hash tag for the remove unicode operation)                                           
+
+# html entities form of print pyQuickTags(r""" """) are to be used within python quick tags of print pyQuickTags(r""" """)     that     are       &lt;% %&gt;  at this time,  Note: this may be a concern, and htmlentities any string containing that will convert it to &amp;lt;% %&amp;gt;
+# Therefore a feature to be implemented is to address that automatically for convenience
 
 # statements marked by UNCOMMENT POINT *A* and *B* uncomment to remove unicode type quick python tags i.e., <unicode> </unicode>  though the contents in between the tags remain intact
 #.unicode_markup()	# this is the method to remove the unicode type python quick tags, and give it a False argument
@@ -449,10 +590,10 @@ $user->name = 'Hello 123.00 \\a\\1\\2\\3\\4\\5\\6\\7\\8\\9\\b\\f\\v\\r\\n\\t\\0\
 $user->desig = "CEO";
 $user->lang = "PHP Running Through subprocess (Python)";
 $user->purpose = "To print log messages to the browser console messages to the browser";
-# var_dump($fruits);
-#logConsole('$name var', $name, true);
-#logConsole('An array of fruits', $fruits, true);
-#logConsole('$user object', $user, true);
+// var_dump($fruits);	// uncomment to display the array 
+logConsole('$name var', $name, true);
+logConsole('An array of fruits', $fruits, true);
+logConsole('$user object', $user, true);
 """)
 
 
@@ -476,7 +617,7 @@ $user->purpose = "To print log messages to the browser console messages to the b
 	# (only for the previously stated purpose. So it's just to inspect and review the string by writing it to a file)
 	s = s.replace("#\\'#", "#'#").replace('#\\"\\"#', '#""#').replace("#\\'\\'#", "#''#") # comment this line out to view the exact string that gets OUTPUT to the web
 	
-	#to_write('testit.txt', s ) # uses to determine problematic characters only, can be removed
+	#to_write('testit.txt', s ) # uses to determine problematic characters only, can be removed, and to verify the contents of a php string by outputing to a file
 	
 	# Sidenote: I did update the original regex and removed the \s to allow spaces and its noteworthy that it only needs one backslash to escape the string
 	# as well as extended the regex just for demonstration to cover the escape characters commonly used
