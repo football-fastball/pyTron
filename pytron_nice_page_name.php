@@ -458,8 +458,7 @@ if (not($done) ) {
 	$var = $base_name_without_extension . '.py';
 
 	if (not (file_exists($var))){  /* this_page_name.py file (front.py) */
-		$t = str_replace( 'PHP_OPEN_TAG_REPLACE', '<'.'?'.'php', $t);
-		$t = str_replace( 'PHP_CLOSE_TAG_REPLACE', '?'.'>', $t);
+		$t = str_replace( 'PHP_OPEN_TAG_REPLACE', '<'.'?'.'php', $t);     # removed closing tag, unnecessary (sometimes errors also, the \n): 02-21-2015
 		to_write($var, $t);
 		$var_file1= true;
 	}
@@ -683,26 +682,22 @@ class pyQuickTags(str):
 	def htmlentities(self):
 		salt = uuid.uuid4().hex
 		s = self.replace('&quot;&quot;&quot;', '*QUOT-*-QUOT-*-QUOT*'+salt)
-		s = s.replace("'",  '*apos-*'+salt) # remove this line
-		s = s.replace('\n', '*newline-*'+salt)
-		s = s.replace('\t', '*tab-*'+salt)
+		s = s.replace("'",  '*apos-*'+salt)
 		s = s.replace(r'\\', '*slash-*'+salt)
 		
-		code_init = r""" echo htmlentities('%s'); """ % s    # or put between python quick tags <% %> works too    r"""  """  for a tiny speed up or perhaps when testing a new feature
+		code_init = <% echo htmlentities('%s'); %>  %  s   # or r"""   """
 		var = php(code_init)
 
 		var = var.replace('*QUOT-*-QUOT-*-QUOT*'+salt, '&quot;&quot;&quot;')		
-		var = var.replace( '*apos-*'+salt,    "'")
-		var = var.replace( '*newline-*'+salt, '\n')          # r'\n'  to display in web brower
-		var = var.replace( '*tab-*'+salt,     '\t')          # r'\t'  to display in web brower
-		var = var.replace( '*slash-*'+salt,   r'\\')
+		var = var.replace( '*apos-*'+salt,  "'")
+		var = var.replace( '*slash-*'+salt, r'\\')
 		
 		var = var.replace( '&amp;lt;%' , '&lt;%' ).replace( '%&amp;gt;', '%&gt;' ) # perhaps salt quick tags too
 		
 		#return var # this ok, perhaps to wrap return with pyQuickTags() to then allow another method call
 		
 		return pyQuickTags(var)
-		
+
 	def encodehex(self):
 		return pyQuickTags( str(self).encode('hex') )
 
@@ -712,6 +707,7 @@ class pyQuickTags(str):
 	def to_file(self, file):
 		with open(file, 'w') as fp:
 			fp.write(self)
+		return pyQuickTags(self)
 			
 def console_log_function():
 	return <%
@@ -914,13 +910,12 @@ def print_args(s, intro=''):
 def create_superglobals(args):
 	global same_file
 	# idea to transfer superglobals from PHP here
-	
-               # experimental, just testing PHP called within Python
+
 def php(code): # shell execute PHP from Python (that is being called from php5_module in Apache), for fun...
 	p = Popen(['php'], stdout=PIPE, stdin=PIPE, stderr=STDOUT) # open process
-	o = p.communicate('PHP_OPEN_TAG_REPLACE '+ code +'\n PHP_CLOSE_TAG_REPLACE')[0]
+	o = p.communicate('PHP_OPEN_TAG_REPLACE ' + code )[0]      # updated, removing closing tag, solution 02-21-201
 	try:
-		os.kill(p.pid, signal.SIGTERM)	# kill process
+		os.kill(p.pid, signal.SIGTERM)
 	except:
 		pass
 	return o
@@ -1147,7 +1142,7 @@ filename = os.path.basename(__file__).replace('_compiled.py', '.py') # php filen
 
 
 
-# 
+
 
  # %%>    # UNCOMMENT POINT *B* (uncomment the FIRST comment hash tag for the remove unicode operation)                                           
 
