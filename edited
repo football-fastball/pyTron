@@ -1,3 +1,0 @@
-[master e527739] edited simple_preprocessor_pyThor_features_txt.py file fix a error to the pyQuickTags to be able to call the .htmlentities after a .format method call and a small fix to source_code_from_file function edited and to now call the htmlentities function also
- 4 files changed, 8 insertions(+), 8 deletions(-)
- create mode 100644 edited
