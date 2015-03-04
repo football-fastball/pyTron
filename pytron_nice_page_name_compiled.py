@@ -165,7 +165,7 @@ class pyQuickTags(str):
 			msg = '<br>Full Source Code Display Done. <br>NOTE: early exit from a truncate of an end of full source substring<br><br>'
 		
 
-		return pyQuickTags(self[startpos+len(startfullsource_substring):endpos])   +  msg 
+		return pyQuickTags(self[startpos+len(startfullsource_substring):endpos]   +  msg  )  # update: fix 03-03-2015  parenthesis required outside the string, otherwise htmlentities and additional pyQuickTag methods are not available due to a conversion to a str string from a pyQuickTags string
 																			   #.to_file('justtosee.txt')  # I append this to the pyQuickTags at that point, (one line up) to then view what the data is at that point
 	
 	
@@ -398,7 +398,7 @@ def source_code_from_file(file):
 	
 {**{source_variable}**}
 
-""").format( source_variable = source_code() )	
+""").format( source_variable = source ).htmlentities()   # when htmlentities not needed, then either remove the .htmlentities method, different function name with different code, (perhaps an override local function (w/same name) in website source, (though this override technique could cause confusion) ), or a htmlentities with a boolean arg,parameter version, etc.
 
 
 
@@ -1204,7 +1204,7 @@ While still compatible with being able to use python format variables,
 testing_output = '', #this_is_a_test(),    # test of include file using quick tags python syntax
 
 
-source_variable = source_code(),
+source_variable = source_code_from_file(r'../../source_code.git/progress/app.py'),
 
 example_htmlentities_string = pyQuickTags(r"""  <p><hello world note p tags output><p>  """).htmlentities(), # note, python quick tags stings have .htmlentities method
 
@@ -1219,7 +1219,7 @@ fullsource = get_fullsource(comments = True, pretags=True) if (QUERY_STRING == '
 fullsourcelink = os.path.basename(__file__).replace('_compiled.py', '.php')+'?fullsource' ,     # its auto calculated based on the page name,  or just code   'pytron_nice_page_name.php?fullsource'    #though would have to be edited with each page name change
 
 # for demonstration purpose only, please remove the next line for production code (it is however a feature that is available at any time should you code it)
-pyThorinfo = display_pythorinfo()  if (QUERY_STRING == 'pythorinfo' or QUERY_STRING == 'pytroninfo') else '',   #remove this line to remove the url feature    # optionally with an or statement, perhaps you prefer the info to be the same name as pyTron, (an easy url edit)
+pyThorinfo = display_pythorinfo()  if (QUERY_STRING == 'pythorinfo') else '',   #remove this line to remove the url feature
 
 pythorinfolink = os.path.basename(__file__).replace('_compiled.py', '.php')+'?pythorinfo' ,     # or simply code 'pytron_nice_page_name.php?pythorinfo     #though again, would have to be edited with each page name change
 
