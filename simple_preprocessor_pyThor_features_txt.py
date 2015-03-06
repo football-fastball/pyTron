@@ -217,6 +217,8 @@ class pyQuickTags(str):
 				self = self.replace( '{**{'+item+'}**}' , str(data) )
 			elif type(data) is float:
 				self = self.replace( '{**{'+item+'}**}' , str(data) )
+			elif type(data) is long:
+				self = self.replace( '{**{'+item+'}**}' , str(data) )
 			#else:
 			#	print '(' + data + ')<br>'
 
@@ -226,12 +228,12 @@ class pyQuickTags(str):
 				self = self.replace( '{**{'+item+'}**}' , data )
 			elif data is None:
 				pass
-			elif type(data) is not int and type(data) is not float:     # filtered due to a function type
+			elif type(data) is not int and type(data) is not float and type(data) is not long:     # filtered due to a function type
 				self = self.replace( '{**{'+item+'}**}' , str(data) )
 			#else:
 			#	print '(' + data + ')<br>'
-
-		return pyQuickTags(self)
+		
+		return pyQuickTags(self)		
 		
 	def htmlentities(self):
 	
