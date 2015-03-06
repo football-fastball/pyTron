@@ -901,6 +901,7 @@ echo ('   {**{php_width}**}, {**{php_height}**}  ');
 # with the use of jQuery's .ready and .getScript that also verifies the JavaScript is syntactically correct.
 # If it is correct to the browser's JavaScript engine, the console.log will successfully print to the browser's console.
 
+global direct_global_var
 
 def output(name):
 # With this New Feature: Open and Close Tags for this python file 
@@ -908,6 +909,12 @@ def output(name):
 # Note that the following opening tag, (less-than sign and percent sign) will be replaced by the simple_preprocessor.
 # with this:  PRINT training_wheels_bit_slower_to_remove(""" (lowercase) NOTE: this exact comment line obviously does not run.
 	
+	
+	direct_global_var = 'planet earth, (mercury, venus) mars, etc'
+	direct_local_var = 'hello world'
+	local_var2 = 'hows it going'
+	int_var = 1223344
+	float_var = 5566778899.0	
 	<%
 
 <!DOCTYPE html>
@@ -930,7 +937,7 @@ jQuery.getScript("first.js", function() {
 </script>
 
 </head>
-<body><br>
+<body><br> {**{direct_local_var}**}  {**{local_var2}**}  {**{direct_global_var}**} {**{int_var}**} {**{float_var}**}
 <a href="{**{filename}**}">click to view pyThor page source</a><!-- similar to view source as feature of web browsers -->  <pre style="display:inline">{**{fullsource}**}</pre> <br> <a href="{**{fullsourcelink}**}">view full page source</a> <br>
 <a href="{**{pythorinfolink}**}">pyThorInfo</a> {**{pyThorinfo}**}  <!-- Display pyThor environment by a url get (variable) --> <!-- perhaps put this on different page -->
 <br>{**{testing_output}**}<br>
@@ -1245,9 +1252,9 @@ def algorithm(s, uni_val=str(True) ):
 #		s = s.replace('%%>', ')'+uni_str )    # UNCOMMENT POINT *C* (uncomment the FIRST comment hash tag for the remove unicode operation)      # to remove quick workaround, remove this line
 	
 	if(option_auto_trailing_backslash_doubleit): # an alternative to the algorithm2 solution that (resolves it by adding a trailing backslash) is 
-		s = s.replace('%>','""")')              # to simply add a space to the end of the string at this exact point of the code (that modifies the compiled code only) that somewhat resolves the trailing backslash issue in python triple double quotes 2015.02.08
+		s = s.replace('%>','""").initsupers(locals(),globals())')              # to simply add a space to the end of the string at this exact point of the code (that modifies the compiled code only) that somewhat resolves the trailing backslash issue in python triple double quotes 2015.02.08
 	else:
-		s = s.replace('%>',' """)')     # adds a space 
+		s = s.replace('%>',' """).initsupers(locals(),globals())')     # adds a space 
 
 #		s = s.replace('""")).format (     %:)>', '""").format (   #  %:)> ')    # UNCOMMENT POINT *D* (uncomment the FIRST comment hash tag for the remove unicode operation)     
 	# about the previous line,  to remove quick workaround, remove this line, way to rid one close parenthesis, with the happy face keyword created for this purpose , it comments out the keyword %:)> 
@@ -1519,7 +1526,29 @@ def findtags(open, close, s):
 		idx += 1
 		item ='' # reset item
 	return t
-	
+
+def make_tuples(s):		# for direct format variables using python quick tags {**{  }**}
+
+	fv = []
+
+	start = 0
+	pos   = 0  # or idx
+
+	while (1):
+
+		pos = s.find( '{**{', pos )
+
+		if (pos == -1):
+			break
+		else:
+			pos += 4
+			start = pos
+			pos = s.find( '}**}', pos )
+			fv.append( s[start:pos]  )  # (start, pos)
+			pos += 4
+			
+	return fv		
+
                   # utags will return the string with unicode type python quick tags ON as its initial value, by default.
                   # for convenience, the utags is a string object that creates a version of the source code when JavaScript is off as a transition until browser native implementation
 class utags(str): # or unicode_show  ,  whichever is a more appropriate label
@@ -1601,8 +1630,38 @@ class pyQuickTags(str):
 
 		return pyQuickTags(self[startpos+len(startfullsource_substring):endpos]   +  msg  )  # update: fix 03-03-2015  parenthesis required outside the string, otherwise htmlentities and additional pyQuickTag methods are not available due to a conversion to a str string from a pyQuickTags string
 																			   #.to_file('justtosee.txt')  # I append this to the pyQuickTags at that point, (one line up) to then view what the data is at that point
-	
-	
+
+	def initsupers(self, *args):
+		
+		format_vars = make_tuples(self)
+
+		for item in format_vars:
+
+			data = args[0].get(item)  # locals
+			if type(data) is str and data:
+				self = self.replace( '{**{'+item+'}**}' , data )
+			elif data is None:
+				pass
+			elif type(data) is int:
+				self = self.replace( '{**{'+item+'}**}' , str(data) )
+			elif type(data) is float:
+				self = self.replace( '{**{'+item+'}**}' , str(data) )
+			#else:
+			#	print '(' + data + ')<br>'
+
+				
+			data = args[1].get(item)  # globals
+			if type(data) is str and data:
+				self = self.replace( '{**{'+item+'}**}' , data )
+			elif data is None:
+				pass
+			elif type(data) is not int and type(data) is not float:     # filtered due to a function type
+				self = self.replace( '{**{'+item+'}**}' , str(data) )
+			#else:
+			#	print '(' + data + ')<br>'
+
+		return pyQuickTags(self)
+		
 	def htmlentities(self):
 	
 		salt = uuid.uuid4().hex

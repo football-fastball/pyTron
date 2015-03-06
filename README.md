@@ -30,6 +30,12 @@ Usage:  Your web server will serve the PHP file, page requests are to be made to
 After making changes to your source code, pytron_nice_page_name_compiled.py must be deleted, then running the .php file will re-create the file.
 Later versions of pyTron will automatically determine whether the source has been modified and will compile it automatically for you.
 
+2015.03.06
+Among several features added, this new innovative feature is direct format variables that replace a variable for text without the required use of a .format method.
+Though note that any global variables and local variables and within the python quick tags <% %> (that are raw literal triple double quoted strings) and using format 
+variable syntax of {**{local_or_global_variable_name}**} that you should consider whenever text can be replaced with this new feature.  You may also use the .format method in addition to this feature as before.
+
+
 2015.03.02
 Many features have been added including web server environment variables of pySERVER, pyGET, pyPOST, and pyFILES (including convenient variables variable within the four pyOJBECTS) sent from the .PHP file to PyTron (pyThor).
 Added the url get features of pytron_nice_page_name.php?pythorinfo (or ?pytroninfo if you prefer) , pytron_nice_page_name.php?fullsource , and pytron_nice_page_name.php?features though note this is by using the pytron_nice_page_name.php file to display variables from your pytron_nice_page_name.py website source code file by the same name as the php page.

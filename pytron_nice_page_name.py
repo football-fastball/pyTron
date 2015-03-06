@@ -132,6 +132,7 @@ echo ('   {**{php_width}**}, {**{php_height}**}  ');
 # with the use of jQuery's .ready and .getScript that also verifies the JavaScript is syntactically correct.
 # If it is correct to the browser's JavaScript engine, the console.log will successfully print to the browser's console.
 
+global direct_global_var
 
 def output(name):
 # With this New Feature: Open and Close Tags for this python file 
@@ -139,6 +140,12 @@ def output(name):
 # Note that the following opening tag, (less-than sign and percent sign) will be replaced by the simple_preprocessor.
 # with this:  PRINT training_wheels_bit_slower_to_remove(""" (lowercase) NOTE: this exact comment line obviously does not run.
 	
+	
+	direct_global_var = 'planet earth, (mercury, venus) mars, etc'
+	direct_local_var = 'hello world'
+	local_var2 = 'hows it going'
+	int_var = 1223344
+	float_var = 5566778899.0	
 	<%
 
 <!DOCTYPE html>
@@ -161,7 +168,7 @@ jQuery.getScript("first.js", function() {
 </script>
 
 </head>
-<body><br>
+<body><br> {**{direct_local_var}**}  {**{local_var2}**}  {**{direct_global_var}**} {**{int_var}**} {**{float_var}**}
 <a href="{**{filename}**}">click to view pyThor page source</a><!-- similar to view source as feature of web browsers -->  <pre style="display:inline">{**{fullsource}**}</pre> <br> <a href="{**{fullsourcelink}**}">view full page source</a> <br>
 <a href="{**{pythorinfolink}**}">pyThorInfo</a> {**{pyThorinfo}**}  <!-- Display pyThor environment by a url get (variable) --> <!-- perhaps put this on different page -->
 <br>{**{testing_output}**}<br>
@@ -256,7 +263,7 @@ fullsource = get_fullsource(comments = True, pretags=True) if (QUERY_STRING == '
 fullsourcelink = os.path.basename(__file__).replace('_compiled.py', '.php')+'?fullsource' ,     # its auto calculated based on the page name,  or just code   'pytron_nice_page_name.php?fullsource'    #though would have to be edited with each page name change
 
 # for demonstration purpose only, please remove the next line for production code (it is however a feature that is available at any time should you code it)
-pyThorinfo = display_pythorinfo()  if (QUERY_STRING == 'pythorinfo' or QUERY_STRING == 'pytroninfo') else '',   #remove this line to remove the url feature    # optionally with an or statement, perhaps you prefer the info to be the same name as pyTron, (an easy url edit)
+pyThorinfo = display_pythorinfo()  if (QUERY_STRING == 'pythorinfo') else '',   #remove this line to remove the url feature
 
 pythorinfolink = os.path.basename(__file__).replace('_compiled.py', '.php')+'?pythorinfo' ,     # or simply code 'pytron_nice_page_name.php?pythorinfo     #though again, would have to be edited with each page name change
 
