@@ -937,7 +937,12 @@ jQuery.getScript("first.js", function() {
 </script>
 
 </head>
-<body><br> {**{direct_local_var}**}  {**{local_var2}**}  {**{direct_global_var}**} {**{int_var}**} {**{float_var}**}
+<body><br>
+
+%> + pyQuickTags('hello world<br> what is around there').htmlentities() +
+
+<%
+ {**{direct_local_var}**}  {**{local_var2}**}  {**{direct_global_var}**} {**{int_var}**} {**{float_var}**}
 <a href="{**{filename}**}">click to view pyThor page source</a><!-- similar to view source as feature of web browsers -->  <pre style="display:inline">{**{fullsource}**}</pre> <br> <a href="{**{fullsourcelink}**}">view full page source</a> <br>
 <a href="{**{pythorinfolink}**}">pyThorInfo</a> {**{pyThorinfo}**}  <!-- Display pyThor environment by a url get (variable) --> <!-- perhaps put this on different page -->
 <br>{**{testing_output}**}<br>
@@ -1235,6 +1240,11 @@ def adjacent(itemA, itemB, new, s): # skips whitespace  # regrettably had to res
 	return re.sub(r'\(\s{0,}<%', new, s)  # 0 to many spaces in between the ( and <%     #note: i had to escape the open parenthesis in this regex search
 	
 	
+def concat2( itemA, itemB, new, s):
+	
+	return re.sub( itemB + r'\s{0,}\+\s{0,}<%', new, s )
+
+	
 def algorithm(s, uni_val=str(True) ):
 	
 	global option_auto_trailing_backslash_doubleit # when set to False adds space to resolve trailing backslash issue
@@ -1247,6 +1257,13 @@ def algorithm(s, uni_val=str(True) ):
 	
 	# note adjacent function for any number of spaces between ( and <%
 	s = adjacent('(', '<%', '( pyQuickTags(r"""', s)
+	
+	s = concat2( '+', '%>', '%> + pyQuickTags(r"""', s)
+	
+	s = concat2( '+', "\)",  ') + pyQuickTags(r"""', s)
+	
+	s = concat2( '+', "\'", '\' + pyQuickTags(r"""', s)  # when text in form  ' + %> or " + %> required
+	s = concat2( '+', '\"', '\" + pyQuickTags(r"""', s)  # can comment these two lines out then
 	
 	s = s.replace('<%', 'print pyQuickTags(r"""')
 #		s = s.replace('%%>', ')'+uni_str )    # UNCOMMENT POINT *C* (uncomment the FIRST comment hash tag for the remove unicode operation)      # to remove quick workaround, remove this line
