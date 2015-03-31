@@ -59,7 +59,7 @@ global CONTEXT_DOCUMENT_ROOT;global SERVER_ADMIN;global SCRIPT_FILENAME;global R
 global SERVER_PROTOCOL;global REQUEST_METHOD;global QUERY_STRING;global REQUEST_URI;global SCRIPT_NAME;global PHP_SELF;
 global REQUEST_TIME_FLOAT;global REQUEST_TIME;
 
-# tempormental variables ( sometimes received,  though ALWAYS initialized )
+# temperamental variables ( sometimes received,  though ALWAYS initialized )
 global HTTP_CACHE_CONTROL;global HTTP_REFERER;
 
 

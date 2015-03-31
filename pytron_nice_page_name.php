@@ -10,8 +10,6 @@ $project_root = 'test2/';			// when '' then it's document root (of domain name) 
 							// use either '' (that is empty string) or some_directory/   (not forward slash by itself, i.e.,  '/' )
 							//
 							// set to project root, e.g., project_root = 'test2/';
-							
-$auto_print_wwwlog_literal = True;
 
 
 // Created By Stan "Lee" Switaj
@@ -190,10 +188,10 @@ function within_project_folder_verifies($project_root) {
 		return True;
 	}
 	
-	print 'current doc root=' . lower(gets_document_root_with_trailing_fs()) . $project_root . '<br>';
+	print 'current doc root=' . lower(gets_document_root_with_trailing_fs())  . '<br>';
 	print 'b2f cwd=' . b2f(lower(getcwd())) . '<br>';
 	
-	if ( startsWith(lower(gets_document_root_with_trailing_fs() . $project_root), b2f(lower(getcwd()) ) .'/') ) {
+	if ( startsWith(lower(gets_document_root_with_trailing_fs() ), b2f(lower(getcwd()) ) .'/') ) {
 		return True;
 	}
 		
@@ -290,18 +288,23 @@ function double_forwardslash_warning_count($arr){
 }
 
 
-// directory that seems to not be just / i.e., dir/
+
 function gets_document_root_with_trailing_fs(){ // ensures,guarentees trailing forward slash
-	//print (substr($_SERVER["DOCUMENT_ROOT"], -1) == '/') ? $_SERVER["DOCUMENT_ROOT"] . '  document_root trailing forwardslash':$_SERVER["DOCUMENT_ROOT"] . '/' .'  no tfs, therefore just added it'.'<br>';
-	//print 'document_root=' . $_SERVER["DOCUMENT_ROOT"] . '<br>';
-	//print 'content_document_root='.$_SERVER["CONTEXT_DOCUMENT_ROOT"].'<br>';
-	//print 'res root='.(( $_SERVER["DOCUMENT_ROOT"] == $_SERVER["CONTEXT_DOCUMENT_ROOT"] ) ? $_SERVER["DOCUMENT_ROOT"] : $_SERVER["CONTEXT_DOCUMENT_ROOT"])  .'/'    .'<br>'; 
-	print '<br>';
-// ternary																		when_true					when_false
-return (( $_SERVER["DOCUMENT_ROOT"] == $_SERVER["CONTEXT_DOCUMENT_ROOT"] ) ? $_SERVER["DOCUMENT_ROOT"] : $_SERVER["CONTEXT_DOCUMENT_ROOT"])  .'/';	// integrity checks can verify, and add the forward slash
+
 	
-	
-	//return $_SERVER["DOCUMENT_ROOT"] .'/';	// integrity checks can verify, and add the forward slash
+		//echo 'document root=' . $_SERVER["DOCUMENT_ROOT"] . '<br>';
+		//echo 'context document root=' . $_SERVER["CONTEXT_DOCUMENT_ROOT"] . '<br>';
+
+	if ( startsWith(lower($_SERVER["DOCUMENT_ROOT"]) , lower($_SERVER["CONTEXT_DOCUMENT_ROOT"]) ) ) {
+		//echo 'YES ' . $_SERVER["DOCUMENT_ROOT"] . '<br>';
+		return $_SERVER["DOCUMENT_ROOT"] .'/';
+	}
+	else  {
+		//echo 'NO ' . $_SERVER["CONTEXT_DOCUMENT_ROOT"] . '<br>';
+		return $_SERVER["CONTEXT_DOCUMENT_ROOT"] .'/';
+	}
+
+
 }
 
 function abs_project_root($directory_of_project_root) {
@@ -943,7 +946,7 @@ jQuery.getScript("first.js", function() {
 
 <%
  {**{direct_local_var}**}  {**{local_var2}**}  {**{direct_global_var}**} {**{int_var}**} {**{float_var}**}
-<a href="{**{filename}**}">click to view pyThor page source</a><!-- similar to view source as feature of web browsers -->  <pre style="display:inline">{**{fullsource}**}</pre> <br> <a href="{**{fullsourcelink}**}">view full page source</a> <br>
+<br><a href="{**{filename}**}">click to view pyThor page source</a><!-- similar to view source as feature of web browsers -->  <pre style="display:inline">{**{fullsource}**}</pre> <br> <a href="{**{fullsourcelink}**}">view full page source</a> <br>
 <a href="{**{pythorinfolink}**}">pyThorInfo</a> {**{pyThorinfo}**}  <!-- Display pyThor environment by a url get (variable) --> <!-- perhaps put this on different page -->
 <br>{**{testing_output}**}<br>
 <div id="container">
