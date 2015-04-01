@@ -47,7 +47,7 @@ global CONTEXT_DOCUMENT_ROOT;global SERVER_ADMIN;global SCRIPT_FILENAME;global R
 global SERVER_PROTOCOL;global REQUEST_METHOD;global QUERY_STRING;global REQUEST_URI;global SCRIPT_NAME;global PHP_SELF;
 global REQUEST_TIME_FLOAT;global REQUEST_TIME;
 
-# tempormental variables ( sometimes received,  though ALWAYS initialized )
+# temperamental variables ( sometimes received,  though ALWAYS initialized )
 global HTTP_CACHE_CONTROL;global HTTP_REFERER;
 
 
@@ -1064,7 +1064,8 @@ file_to_include = 'include.py'
 
 
 		
-def source_code():   # note, this is just source code print to display, not the entire page of the function output prints to the web browser, screen
+def source_code():    # note, this is to display whatever source code is within this function
+	
 	return pyQuickTags(r"""
 <html>
 </head>
@@ -1137,13 +1138,13 @@ width = 100
 height = 100
 code = pyQuickTags(r"""
 
-echo ('   {**{php_width}**}, {**{php_height}**}  ');
+echo ('   {**{width}**}, {**{height}**}  ');
 
-""").initsupers(locals(),globals()).format( php_width = str(width) , php_height = str(height) )
+""").initsupers(locals(),globals())
 
 # Note, any JavaScript or any other code that contains a curly brace 
-# must double the curly brace when using the python format function with the triple double-quoted string, 
-# but not in a JavaScript src file (regardless of using the format function or not).
+# must double the curly brace when using the python format function with the triple double-quoted string that is dealt with automatically with pyQuickTags, 
+# but is not necessary in a JavaScript src file (regardless of using the format function or not).
 
 # It further verifies that the compiled python-like RadScript JavaScript will indeed run,
 # with the use of jQuery's .ready and .getScript that also verifies the JavaScript is syntactically correct.
@@ -1187,7 +1188,7 @@ jQuery.getScript("first.js", function() {
 </head>
 <body><br>
 
-""").initsupers(locals(),globals()) + pyQuickTags('hello world<br> what is around there').htmlentities() + pyQuickTags(r"""
+""").initsupers(locals(),globals()) + pyQuickTags(r""" 'hello world<br> what is around there' """).initsupers(locals(),globals()).htmlentities() + pyQuickTags(r"""
  {**{direct_local_var}**}  {**{local_var2}**}  {**{direct_global_var}**} {**{int_var}**} {**{float_var}**}
 <br><a href="{**{filename}**}">click to view pyThor page source</a><!-- similar to view source as feature of web browsers -->  <pre style="display:inline">{**{fullsource}**}</pre> <br> <a href="{**{fullsourcelink}**}">view full page source</a> <br>
 <a href="{**{pythorinfolink}**}">pyThorInfo</a> {**{pyThorinfo}**}  <!-- Display pyThor environment by a url get (variable) --> <!-- perhaps put this on different page -->
@@ -1291,38 +1292,6 @@ features = display_features() if (QUERY_STRING == 'features') else ''
 
 )
 
-
-# display_superglobals()
-
-
-# QUERY_STRING == 'fullsource&no_comments'  without comments
-
-
-#  NOTE:  that within 
-
-
-#.replace( '&amp;lt;%' , '&lt;%' ).replace( '%&amp;gt;', '%&gt;' )
-
-
-
-
-
- # %""").initsupers(locals(),globals())    # UNCOMMENT POINT *B* (uncomment the FIRST comment hash tag for the remove unicode operation)                                           
-
-# html entities form of print pyQuickTags(r""" """).initsupers(locals(),globals()) are to be used within python quick tags of print pyQuickTags(r""" """).initsupers(locals(),globals())     that     are       &lt;% %&gt;  at this time,  Note: this may be a concern, and htmlentities any string containing that will convert it to &amp;lt;% %&amp;gt;
-# Therefore a feature to be implemented is to address that automatically for convenience
-
-# statements marked by UNCOMMENT POINT *A* and *B* uncomment to remove unicode type quick python tags i.e., <unicode> </unicode>  though the contents in between the tags remain intact
-#.unicode_markup()	# this is the method to remove the unicode type python quick tags, and give it a False argument
-					# the utags wrapper already is automatically created
-					# Usage:
-					# place the keyword False in between .unicode_markup() parenthesis to remove the unicode type python quick tags,
-					# i.e., to drop the <unicode> and </unicode> tags but not the contents,text between the tags
-					# by giving the method unicode_markup() the argument of False it will remove the unicode tags
-					# (by removing the argument or by setting it to True that is the same thing) the unicode tags remain intact.
-					# (See front_compiled. in github commit #47 of this project that I specially modified to show a working usage example)
-					# Otherwise, modify this latest version according to usage description
-					
 	# testing writing print statement to the web browser 
 	# the intent is to create a python function to wrap the writing with print statements to the web browser's console
 	code_init = pyQuickTags(r"""
