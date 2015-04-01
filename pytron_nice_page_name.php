@@ -717,42 +717,8 @@ if ( ! dosprompt_limitworkaround($supercount) ) {		// note: negation
 		unlink ( $filename_superglobals );
 }
 	
-	
-	
-	
-	
-	
-/*
-	if ( not( to_compile($source, $sources_magic_directory_compiled ) ) ) {
-	
-	
-		// when done is set, the folder check is still done due to perhaps the source and index files being moved to a different directory, the project will appear to be fine, but will not run unless the folder is created first before compiling the source 
-		mk_dir_p(abs_project_root($project_root) . $compiled_folder . $flex_folders);    //This function is commented out because these folders are being made in the previous function when done variable is false
-	
-	
-		print 'compiled_sources_magic_directory_path_also=( ' . $sources_magic_directory_compiled . ' )<br>';
-
-	
-			echo '(PYTHON COMPILING) compiled=('.$sources_magic_directory_compiled.')' . '<br>';//$compiled_folder
-	
-
-	
-print 'preprocessor folder=' . $preprocessor_folder . '<br>';
-print 'compiled file=' . $sources_magic_directory_compiled . '<br>';
-
-	
-echo passthru(	'python '.abs_project_root($project_root).$preprocessor_folder.'"simple_preprocessor.py" -M "'.$source.'" "'.$sources_magic_directory_compiled.'" "'.$str_bool_uni_value.'" 2>&1 ');
-	}
 
 
-
-run it
-
-echo '(ALREADY COMPILED)<br>';
-
-echo passthru('python "'.$sources_magic_directory_compiled. '" "' .domain_name_endswith().'"  2>&1 ');
-
-*/
 
 ?>
 
@@ -888,6 +854,8 @@ def domain_name(s):
 	elif(s == 'WIDE'):
 		return 'com'
 
+
+# PHP from pyTron (pyThor)
 # test example, don't forget to have php.exe and php5ts.dll in PATH
 width = 100
 height = 100
@@ -897,23 +865,12 @@ echo ('   {**{width}**}, {**{height}**}  ');
 
 %>
 
-# Note, any JavaScript or any other code that contains a curly brace 
-# must double the curly brace when using the python format function with the triple double-quoted string that is dealt with automatically with pyQuickTags, 
-# but is not necessary in a JavaScript src file (regardless of using the format function or not).
 
-# It further verifies that the compiled python-like RadScript JavaScript will indeed run,
-# with the use of jQuery's .ready and .getScript that also verifies the JavaScript is syntactically correct.
-# If it is correct to the browser's JavaScript engine, the console.log will successfully print to the browser's console.
 
 global direct_global_var
 
 def output(name):
-# With this New Feature: Open and Close Tags for this python file 
-# (It allows syntax highlighting within the tags, and eases coding)
-# Note that the following opening tag, (less-than sign and percent sign) will be replaced by the simple_preprocessor.
-# with this:  PRINT training_wheels_bit_slower_to_remove(""" (lowercase) NOTE: this exact comment line obviously does not run.
-	
-	
+
 	direct_global_var = 'planet earth, (mercury, venus) mars, etc'
 	direct_local_var = 'hello world'
 	local_var2 = 'hows it going'
@@ -1100,7 +1057,6 @@ logConsole('$user object', $user, true);
 #   http://stackoverflow.com/questions/843277/how-do-i-check-if-a-variable-exists-in-python same as
 #   to test variable existence http://stackoverflow.com/a/843293  otherwise .ini for initial options
 #   nice unicode description: https://greeennotebook.wordpress.com/2014/05/24/character-sets-and-unicode-in-python/
-#   perhaps something like this for pyQuickTags http://stackoverflow.com/a/3542763 then perhaps a <% %>.formatdirect() method for direct interpolation, a neat idea
 
 
 
@@ -1559,8 +1515,6 @@ class Str_fv(str): # to allow text that appear as format variables
 				if  item == it:
 					self = self.replace(	open+item+close ,  (open+item+close).replace(open, '{').replace(close, '}'  ) )
 					continue
-		#print self
-		#to_write('str_fv_txt.', self) # error checking
 		
 		return     str( self ).format(*args, **kwargs)  # note:  .format method converts  {{ to {
 	
@@ -1575,9 +1529,7 @@ class pyQuickTags(str):
 	str_fv = Str_fv()
 	
 	def __init__(self, v):        # optional
-		#v = v.replace('{', '{{').replace('}', '}}').replace('{{**{{', '{').replace('}}**}}', '}')
-		#self = v
-		#print self
+
 		self.str_fv = Str_fv(v)
 	
 	
@@ -1595,11 +1547,6 @@ class pyQuickTags(str):
 
 		return pyQuickTags( self.str_fv.format(*args, **kwargs) ).fullsource_truncate(startfullsource_substring = opentag, endfullsource_substring = closetag)   # or init  str_fv()  at this point
 	
-
-		#return     str( s ).format(*args, **kwargs)  # commented out
-		#return super(QuickTags, self ).lower().format(*args, **kwargs)  # commented out
-		# note, can wrap the super(QuickTags, self ) in a function e.g., something(super(str_fv, self )).format(*args, **kwargs)
-		# or call an additional method as .lower does, etc.
 	
 	def fullsource_truncate(self, startfullsource_substring, endfullsource_substring):
 		
@@ -1747,9 +1694,8 @@ $js = <<<JSCODE
 JSCODE;
           echo $js;
      } # end logConsole
-//echo( ' <br> {**{hello}**} <br>');	 
-//echo( '{**{howdy}**}');
-%>.format (  hello='hello world', howdy='very well thanks' )				
+
+%>				
 
 
 def rawstringify_outerquote(s):
@@ -1828,9 +1774,7 @@ def include_quick_tags_file(source):
 	# initially the idea was to compile here with the following statement:
 	#execfile(compiled) # require fullpath, includes file   (though having a scope issue here)
 				
-	return f # hmm, how in -antastic is this, workaround needed by the receiver of this return when same file format is true
-
-	
+	return f
 	
 
 def print_wwwlog(s, literal = True):    # prints to brower's console log
@@ -2412,7 +2356,7 @@ def get_fullsource(comments = True, pretags=False): # True initially
 	
 	out = '*--START OF FULL SOURCE--*'.replace(' ', '_')
 	
-	#        when_true                     when_false
+
 	out += '*openpre-*'+salt  if (pretags) else   ''
 	
 	
@@ -2438,7 +2382,7 @@ def display_features():
 	return pyQuickTags(features).htmlentities()
 	
 	
-def print_args(s, intro=''):
+def print_args(s, intro=''):		# to view the arguments that are sent to PyThor (from PHP)
 	print( intro )
 	for x, item in enumerate(s):
 		print( 'ARG:'+str(x)+'(' + item + ')' ) + '<br>'
@@ -2457,8 +2401,8 @@ def print_args(s, intro=''):
 if __name__ == "__main__":  # in the case not transferring data from php, then simply revert to a previous version, commit
 	
 	print 'pyThor (pyThor,server-side) (rapydscript, python client-side javascript)'
-	#print_args(sys.argv, '<br>HERE front.py '+'<br>')		# to view the arguments that are sent to PyThor (from PHP)
-		
+	#print_args(sys.argv, '<br>HERE front.py '+'<br>')
+
 	create_superglobals(sys.argv)
 	
 	if( not len(sys.argv) >= 2 ):
