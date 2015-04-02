@@ -116,6 +116,8 @@ def domain_name(s):
 	elif(s == 'WIDE'):
 		return 'com'
 
+
+# PHP from pyTron (pyThor)
 # test example, don't forget to have php.exe and php5ts.dll in PATH
 width = 100
 height = 100
@@ -125,23 +127,12 @@ echo ('   {**{width}**}, {**{height}**}  ');
 
 %>
 
-# Note, any JavaScript or any other code that contains a curly brace 
-# must double the curly brace when using the python format function with the triple double-quoted string that is dealt with automatically with pyQuickTags, 
-# but is not necessary in a JavaScript src file (regardless of using the format function or not).
 
-# It further verifies that the compiled python-like RadScript JavaScript will indeed run,
-# with the use of jQuery's .ready and .getScript that also verifies the JavaScript is syntactically correct.
-# If it is correct to the browser's JavaScript engine, the console.log will successfully print to the browser's console.
 
 global direct_global_var
 
 def output(name):
-# With this New Feature: Open and Close Tags for this python file 
-# (It allows syntax highlighting within the tags, and eases coding)
-# Note that the following opening tag, (less-than sign and percent sign) will be replaced by the simple_preprocessor.
-# with this:  PRINT training_wheels_bit_slower_to_remove(""" (lowercase) NOTE: this exact comment line obviously does not run.
-	
-	
+
 	direct_global_var = 'planet earth, (mercury, venus) mars, etc'
 	direct_local_var = 'hello world'
 	local_var2 = 'hows it going'
@@ -180,11 +171,11 @@ jQuery.getScript("first.js", function() {
 <br>{**{testing_output}**}<br>
 <div id="container">
 pytron_nice_page_name.php?pythorinfo
-<div id="top">{**{top_content}**}</div>
+<div id="top">{**{top_content_var}**}</div>
 
-<div id="mid">{**{mid_content}**}  <br>  <pre>{**{features}**}</pre>   </div>
+<div id="mid">{**{mid_content_var}**}  <br>  <pre>{**{features}**}</pre>   </div>
 
-<div id="end">{**{end_content}**}</div>
+<div id="end">{**{end_content_var}**}</div>
 
 </div>
 
@@ -243,9 +234,9 @@ While still compatible with being able to use python format variables,
 
 %>.format (   #  %:)>    # UNCOMMENT POINT *A* (uncomment the FIRST comment hash tag for the remove unicode operation   # the arbitrary find string is exactly this 20 characters long, quick workaround to subtract a parenthesis keyword operator # hap face keyword to rid a frown ( removes a close parenthesis ) (an arbitrary keyword created to remove one text character)
 	# variables used
-	top_content = top_content(),
-	mid_content = mid_content(),
-	end_content = end_content(),
+	top_content_var = top_content(),
+	mid_content_var = mid_content(),
+	end_content_var = end_content(),
 	php_test    = php(code),  # just testing, remove if coding anything serious
 	
 	domain      = domain_name(name), # or something like whether a mobile device,
@@ -328,7 +319,6 @@ logConsole('$user object', $user, true);
 #   http://stackoverflow.com/questions/843277/how-do-i-check-if-a-variable-exists-in-python same as
 #   to test variable existence http://stackoverflow.com/a/843293  otherwise .ini for initial options
 #   nice unicode description: https://greeennotebook.wordpress.com/2014/05/24/character-sets-and-unicode-in-python/
-#   perhaps something like this for pyQuickTags http://stackoverflow.com/a/3542763 then perhaps a <% %>.formatdirect() method for direct interpolation, a neat idea
 
 
 
