@@ -1435,7 +1435,7 @@ global SERVER_PROTOCOL;global REQUEST_METHOD;global QUERY_STRING;global REQUEST_
 global REQUEST_TIME_FLOAT;global REQUEST_TIME;
 
 # temperamental variables ( sometimes received,  though ALWAYS initialized )
-global HTTP_CACHE_CONTROL;global HTTP_REFERER;
+global HTTP_CACHE_CONTROL;global HTTP_REFERER;global HTTP_PRAGMA;
 
 
 # These variables are automatically populated by the create_superglobals function, please do NOT edit them!
@@ -1447,7 +1447,7 @@ SERVER_ADDR='';SERVER_PORT='';REMOTE_ADDR='';DOCUMENT_ROOT='';REQUEST_SCHEME='';
 CONTEXT_DOCUMENT_ROOT='';SERVER_ADMIN='';SCRIPT_FILENAME='';REMOTE_PORT='';GATEWAY_INTERFACE='';
 SERVER_PROTOCOL='';REQUEST_METHOD='';QUERY_STRING='';REQUEST_URI='';SCRIPT_NAME='';PHP_SELF='';
 REQUEST_TIME_FLOAT='';REQUEST_TIME='';
-HTTP_CACHE_CONTROL='';HTTP_REFERER='';
+HTTP_CACHE_CONTROL='';HTTP_REFERER='';HTTP_PRAGMA='';
 
 
 def findtags(open, close, s):
@@ -1915,7 +1915,7 @@ def create_superglobals(args):
 	global HTTP_ACCEPT;        global WINDIR;				 global GATEWAY_INTERFACE;
 	global REMOTE_PORT;        global HTTP_ACCEPT_LANGUAGE;  global REQUEST_SCHEME;
 	global REQUEST_TIME_FLOAT; global HTTP_ACCEPT_ENCODING;
-	global HTTP_CACHE_CONTROL; global HTTP_REFERER;
+	global HTTP_CACHE_CONTROL; global HTTP_REFERER;			 global HTTP_PRAGMA;
 	
 	
 	
@@ -1934,7 +1934,7 @@ def create_superglobals(args):
 'DOCUMENT_ROOT':17,'COMSPEC':18,'SCRIPT_FILENAME':19,'SERVER_ADMIN':20,'HTTP_HOST':21,'SCRIPT_NAME':22,
 'PATHEXT':23,'HTTP_CACHE_CONTROL':24,'REQUEST_URI':25,'HTTP_ACCEPT':26,'WINDIR':27,'GATEWAY_INTERFACE':28,
 'REMOTE_PORT':29,'HTTP_ACCEPT_LANGUAGE':30,'REQUEST_SCHEME':31,'REQUEST_TIME_FLOAT':32,'HTTP_ACCEPT_ENCODING':33,
-'HTTP_REFERER':34
+'HTTP_REFERER':34,'HTTP_PRAGMA':35
 }
 
 
@@ -2020,6 +2020,8 @@ def create_superglobals(args):
 				HTTP_ACCEPT_ENCODING = item if (var_name == 'HTTP_ACCEPT_ENCODING' ) else exit_program('HTTP_ACCEPT_ENCODING')
 			elif (x == 34):
 				HTTP_REFERER         = item if (var_name == 'HTTP_REFERER' )         else exit_program('HTTP_REFERER')
+			elif (x == 35):
+				HTTP_PRAGMA          = item if (var_name == 'HTTP_PRAGMA'  )         else exit_program('HTTP_PRAGMA' )
 		else:
 			if   (x == 0):
 				REQUEST_TIME         = item
@@ -2091,7 +2093,9 @@ def create_superglobals(args):
 				HTTP_ACCEPT_ENCODING = item
 			elif (x == 34):
 				HTTP_REFERER         = item
-
+			elif (x == 35):
+				HTTP_PRAGMA          = item
+				
 	#if (ensure):  # this would perhaps get a performance speedup (not recommended)
 			# these are sort of  None  cases
 
@@ -2201,7 +2205,9 @@ def create_superglobals(args):
 		if 'HTTP_REFERER' not in pySERVER.keys():
 				HTTP_REFERER                     = ''
 				pySERVER['HTTP_REFERER']         = ''
-
+		if 'HTTP_PRAGMA'  not in pySERVER.keys():
+				HTTP_PRAGMA                      = ''
+				pySERVER['HTTP_PRAGMA' ]         = ''
 
 		
 def display_pythorinfo(): # pyThor_info()    display_superglobals()
@@ -2232,10 +2238,10 @@ def display_pythorinfo(): # pyThor_info()    display_superglobals()
 	
 	%>.format( name = item , value = pySERVER[item] )                                 
 	
-	out += <%	</table>	%>
+	out += <%
 	
+		</table>
 	
-	out += <% 
 		<h1>Printing the pySERVER superglobal variables</h1>
 		<table border="1">
 	%>
@@ -2248,12 +2254,9 @@ def display_pythorinfo(): # pyThor_info()    display_superglobals()
 	%>.format( name = var_name , value = item )    #   or something like    out += '<tr><td>'+var_name+'</td> <td>'+str( item )+'</td></tr>'
 	
 	out += <%
+	
 		</table>
-	%>
-	
-	
-	
-	out += <% 
+		
 		<h1>Printing the pyGET superglobal variable contents</h1>
 		<table border="1">
 	%>
@@ -2265,11 +2268,10 @@ def display_pythorinfo(): # pyThor_info()    display_superglobals()
 	
 	%>.format( name = var_name , value = item )    #   or something like    out += '<tr><td>'+var_name+'</td> <td>'+str( item )+'</td></tr>'
 	
-	out += <%	</table>	%>
+	out += <%
 	
+		</table>
 	
-
-	out += <% 
 		<h1>Printing the pyPOST superglobal variable contents</h1>
 		<table border="1">
 	%>
@@ -2282,12 +2284,12 @@ def display_pythorinfo(): # pyThor_info()    display_superglobals()
 	
 	%>.format( name = var_name , value = item )    #   or something like    out += '<tr><td>'+var_name+'</td> <td>'+str( item )+'</td></tr>'
 	
-	out += <%	</table>	%>
+	out += <%
 	
+		</table>
 	
-	out += <% 
-	<h1>Printing the pyFILES superglobal variable contents</h1>
-	<table border="1">
+		<h1>Printing the pyFILES superglobal variable contents</h1>
+		<table border="1">
 	%>
 	
 	for var_name, item in pyFILES.items():
