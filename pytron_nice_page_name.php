@@ -188,10 +188,11 @@ function within_project_folder_verifies($project_root) {
 		return True;
 	}
 	
-	print 'current doc root=' . lower(gets_document_root_with_trailing_fs())  . '<br>';
-	print 'b2f cwd=' . b2f(lower(getcwd())) . '<br>';
+	print '<br>';
+	print 'current doc root=' . lower(gets_document_root_with_trailing_fs()) . $project_root  . '<br>';
+	print 'b2f cwd=' . b2f(lower(getcwd()))  .'/'. '<br>';
 	
-	if ( startsWith(lower(gets_document_root_with_trailing_fs() ), b2f(lower(getcwd()) ) .'/') ) {
+	if ( startsWith(lower(gets_document_root_with_trailing_fs() . $project_root ), b2f(lower(getcwd()) ) .'/') ) {
 		return True;
 	}
 		
