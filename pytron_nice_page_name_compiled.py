@@ -1228,25 +1228,12 @@ logConsole('An array of fruits', $fruits, true);
 logConsole('$user object', $user, true);
 """).initsupers(locals(),globals())
 
- 
 	# Written to print to the console log of a web browser
-
-	# Including an external python file that uses quick tags, (both open and close tags), and a format string variable syntax of {**{variable_name}**}
-	
 	s = (code_init + "\n" + console_log_function()  )
-	
-	# Escaping quotes seem to be the only small hassle from converting php source code to php source code within a python triple quoted string 
-	# (due to the slightly obtuse (yet it works) situation of... running PHP then system calling python and within it, running PHP within a python triple quoted string)
-	# therefore, NOTE: the extra backslash compared with the php version
-	# this will convert it to the exact php, but I've no need of it at this time, though note the following variable name in the comments (the immediate next line)
-	# string_to_write__NOT_DISPLAY_for_exact_PHP_equivalent_source_code = s.replace("#\\'#", "#'#").replace('#\\"\\"#', '#""#').replace("#\\'\\'#", "#''#")   # works, tested
-	# The previous statement string (in the comments) can be used to write if desired to get the exact PHP equivalent that is different than the string used to output to the web page 
-	# (due to an extra backslash required by python for quotes)
-
 	
 	# For convenience I've included it in the following write statement anyway (to get the exact equivalent to the PHP source code string)
 	# The next line is optional to the OUTPUT to Web (i.e., it will not affect the display OUTPUT to web 
-	# (only for the previously stated purpose. So it's just to inspect and review the string by writing it to a file)
+	# It's just to inspect and review the string by writing it to a file)
 	s = s.replace("#\\'#", "#'#").replace('#\\"\\"#', '#""#').replace("#\\'\\'#", "#''#") # comment this line out to view the exact string that gets OUTPUT to the web
 	
 	#to_write('testit.txt', s ) # uses to determine problematic characters only, can be removed, and to verify the contents of a php string by outputing to a file
@@ -1255,7 +1242,6 @@ logConsole('$user object', $user, true);
 	print php(  s   )
 
 	
-
 #   notes:
 #   https://sarfraznawaz.wordpress.com/2012/01/05/outputting-php-to-browser-console/
 #   http://stackoverflow.com/questions/843277/how-do-i-check-if-a-variable-exists-in-python same as
