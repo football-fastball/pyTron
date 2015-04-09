@@ -166,8 +166,18 @@ jQuery.getScript("first.js", function() {
 
 <%
  {**{direct_local_var}**}  {**{local_var2}**}  {**{direct_global_var}**} {**{int_var}**} {**{float_var}**}
-<br><a href="{**{filename}**}">click to view pyThor page source</a><!-- similar to view source as feature of web browsers -->  <pre style="display:inline">{**{fullsource}**}</pre> <br> <a href="{**{fullsourcelink}**}">view full page source</a> <br>
-<a href="{**{pythorinfolink}**}">pyThorInfo</a> {**{pyThorinfo}**}  <!-- Display pyThor environment by a url get (variable) --> <!-- perhaps put this on different page -->
+<br>
+
+<a href="{**{pagesourcelink}**}">click to view pyThor page source</a> <br>  
+<pre style="display:inline">{**{pagesource}**}</pre>
+<!-- similar to view source as feature of web browsers -->  
+
+<a href="{**{fullsourcelink}**}">view full page source</a> <br>
+<pre style="display:inline">{**{fullsource}**}</pre>
+
+<a href="{**{pythorinfolink}**}">pyThorInfo</a> {**{pyThorinfo}**}  
+<!-- Display pyThor environment by a url get (variable) -->
+
 <br>{**{testing_output}**}<br>
 <div id="container">
 pytron_nice_page_name.php?pythorinfo
@@ -239,33 +249,29 @@ While still compatible with being able to use python format variables,
 	end_content_var = end_content(),
 	php_test    = php(code),  # just testing, remove if coding anything serious
 	
-	domain      = domain_name(name), # or something like whether a mobile device,
-                                     # resolution information, etc. to select which css that fits	
+	domain = 'us' if (name == 'A') else  'com',                  # else (name == 'WIDE')  # or something like whether a mobile device, resolution information, etc. to select which css that fits
 
-testing_output = '', #this_is_a_test(),    # test of include file using quick tags python syntax
+	testing_output = '', #this_is_a_test(),    # test of include file using quick tags python syntax
 
+	source_variable = source_code(),
 
-source_variable = source_code(),
+	example_htmlentities_string = <%  <p><hello world note p tags output><p>  %>.htmlentities(), # note, python quick tags stings have .htmlentities method
 
-example_htmlentities_string = <%  <p><hello world note p tags output><p>  %>.htmlentities(), # note, python quick tags stings have .htmlentities method
+	pagesourcelink = os.path.basename(__file__).replace('_compiled.py', '.php')+'?pagesource',  # php filename witout extension
 
-filename = os.path.basename(__file__).replace('_compiled.py', '.py'), # php filename witout extension
+	pagesource = source_code_from_file( os.path.basename(__file__).replace('_compiled.py', '.py') ) if (QUERY_STRING == 'pagesource') else '' , 								 			 
+	
+	fullsourcelink = os.path.basename(__file__).replace('_compiled.py', '.php')+'?fullsource' ,     # its auto calculated based on the page name,  or just code   'pytron_nice_page_name.php?fullsource'    #though would have to be edited with each page name change
 
-fullsource = get_fullsource(comments = True, pretags=True) if (QUERY_STRING == 'fullsource') else '' , 
+	fullsource = get_fullsource(comments = True, pretags=True) if (QUERY_STRING == 'fullsource') else '' , 
 
-# __formatvariable_stop = (  '*--END OF FULL SOURCE--*'.replace(' ', '_' ) ) if (QUERY_STRING == 'fullsource') else '',  #   or perhaps to name it   __sysexit()  to truncate at the substring (note use of __ variables NOT recommended)
+	 __formatvariable_range = ('*--START OF FULL SOURCE--*'.replace(' ', '_' ) , '*--END OF FULL SOURCE--*'.replace(' ', '_' )) if (QUERY_STRING == 'fullsource') else ('',''),
+	
+	pythorinfolink = os.path.basename(__file__).replace('_compiled.py', '.php')+'?pythorinfo' ,     # or simply code 'pytron_nice_page_name.php?pythorinfo     #though again, would have to be edited with each page name change
 
- __formatvariable_range = ('*--START OF FULL SOURCE--*'.replace(' ', '_' ) , '*--END OF FULL SOURCE--*'.replace(' ', '_' )) if (QUERY_STRING == 'fullsource') else ('',''),
+	pyThorinfo = display_pythorinfo()  if (QUERY_STRING == 'pythorinfo') else '',   #remove this line to remove the url feature  	# for demonstration purpose only, please remove the next line for production code (it is however a feature that is available at any time should you code it)
 
-fullsourcelink = os.path.basename(__file__).replace('_compiled.py', '.php')+'?fullsource' ,     # its auto calculated based on the page name,  or just code   'pytron_nice_page_name.php?fullsource'    #though would have to be edited with each page name change
-
-# for demonstration purpose only, please remove the next line for production code (it is however a feature that is available at any time should you code it)
-pyThorinfo = display_pythorinfo()  if (QUERY_STRING == 'pythorinfo') else '',   #remove this line to remove the url feature
-
-pythorinfolink = os.path.basename(__file__).replace('_compiled.py', '.php')+'?pythorinfo' ,     # or simply code 'pytron_nice_page_name.php?pythorinfo     #though again, would have to be edited with each page name change
-
-features = display_features() if (QUERY_STRING == 'features') else ''
-
+	features = display_features() if (QUERY_STRING == 'features') else ''
 )
 
 	# testing writing print statement to the web browser 
