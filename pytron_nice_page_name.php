@@ -777,13 +777,8 @@ import sys
 
 # INCLUDES TO BE PLACED HERE
 file_to_include = 'include.py'
-# including this way due to execfile does not including a file within a def,function as I expected
-#execfile(include_quick_tags_file(file_to_include))	# this functin used to include each python file with quick tags		 
-
-# NOTE: include section of source code with two entries due to workaround needed for execfile def,function
-#execfile(include_quick_tags_file(file_to_include))
-
-
+# including this way due to execfile does not include a file from within a def,function
+#execfile(include_quick_tags_file(file_to_include))	# this function used to include each python file		 
 
 		
 def source_code():    # note, this is to display whatever source code is within this function
