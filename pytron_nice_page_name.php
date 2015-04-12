@@ -695,9 +695,6 @@ if (  to_compile($source, $sources_magic_directory_compiled)  ||  $bool_recompil
 	
 	
 	echo passthru( 'python '.abs_project_root($project_root).$preprocessor_folder.'"simple_preprocessor.py" -M "'.$source.'" "'.$sources_magic_directory_compiled.'" "'.$str_bool_uni_value.'" 2>&1 ');
-
-	// prev:	
-	//	echo passthru(	'python simple_preprocessor.py -M "'.$source.'" "'.$compiled.'" "'.$str_bool_uni_value.'" 2>&1' );
 }
 else {
 	;//echo '( NOT compiling!!!)';
@@ -705,20 +702,14 @@ else {
 
 //echo '(ALREADY COMPILED)<br>';
 
-//prev:
-//echo passthru('python "'.$sources_magic_directory_compiled. '" "' .domain_name_endswith().'"  2>&1 ');
-
 
 echo passthru('python "'.$sources_magic_directory_compiled. '" "' .domain_name_endswith().'" "'. $var_superglobals . '" "' . $var_superget . '" "' . $var_superpost  . '" "' . $var_superfiles . '" "'.  abs_project_root($project_root).$preprocessor_folder  .'" "'. source_directory() .'" 2>&1 ');
-
 
 
 if ( ! dosprompt_limitworkaround($supercount) ) {		// note: negation
 	if ( file_exists($filename_superglobals) )
 		unlink ( $filename_superglobals );
 }
-	
-
 
 
 ?>
@@ -809,29 +800,20 @@ and more of the website too
 	
 def top_content():
     
-	print_wwwlog( '''I am at " the top " content''' ) # NOTE: better to use triple single quotes , best to put a space before and after a triple quoted string (though not necessary for triple SINGLE quotes)
-	                                                  # (the open and close quick tags (< % % > with no spaces) to denote a 
-                                                      # triple double quoted string ONLY for return and assignment statements at this time) 
-                                                      # due to a space needed before closing parenthesis 
-                                                      # when using triple DOUBLE quotes (no restriction with triple SINGLE quotes by you, the programmer)
-	# at this time, one or no spaces between open parenthesis and open quick tag (no resriction on the close python quick tag as far as spaces around it)
+	print_wwwlog( <% top content string %> )
+	
 	print_wwwlog ( <% example of new feature using quick tags between parenthesis %> )
 	
 	return ' pyThor    @    www.pyThor.us '
 	
 def mid_content():
 
-	print_wwwlog( <% I am  at  '''''''{}{}{}{} {{{{ }}}} the middle content \a\1\2\3\4\5\6\7\8\9\b\f\v\r\n\t\0\x0B
-	
-	
-I have denoted newlines within a raw string , sent to the web browser that also interprets as newlines
-And saving the file also is fine.
+	print_wwwlog( <% middle content string 
 
 <br>
 <br>
 hello world  (but html characters are not interpreted this way)
-%>    )  # TWO SMALL CASES TO ESCAPE WITH RAW STRING LITERALS, a backslash before a single quote or double quote 
-          # (depending what are the outer quotes) and if the intent is to have a backslash at the end of a string, need two of them
+%>    )
 
 	return <%
 	 
@@ -842,7 +824,7 @@ hello world  (but html characters are not interpreted this way)
 def end_content():
 	return 'footer'
 	
-# in the case not transferring data from php using multiple domains, simply revert to a previous version, commit 
+ 
 def domain_name(s):   
 	if(s == 'A'):
 		return 'us'
@@ -913,7 +895,7 @@ jQuery.getScript("first.js", function() {
 
 <br>{**{testing_output}**}<br>
 <div id="container">
-pytron_nice_page_name.php?pythorinfo
+
 <div id="top">{**{top_content_var}**}</div>
 
 <div id="mid">{**{mid_content_var}**}  <br>  <pre>{**{features}**}</pre>   </div>
@@ -975,8 +957,8 @@ While still compatible with being able to use python format variables,
 
 </pre>
 
-%>.format (   #  %:)>    # UNCOMMENT POINT *A* (uncomment the FIRST comment hash tag for the remove unicode operation   # the arbitrary find string is exactly this 20 characters long, quick workaround to subtract a parenthesis keyword operator # hap face keyword to rid a frown ( removes a close parenthesis ) (an arbitrary keyword created to remove one text character)
-	# variables used
+%>.format (  # variables used
+
 	top_content_var = top_content(),
 	mid_content_var = mid_content(),
 	end_content_var = end_content(),
@@ -1755,12 +1737,12 @@ def source_code_from_file(file):
 	with open(file, 'r') as fp:   # or .cpp .php  etc.
 		source = fp.read()
 		source = source.replace('"""', '&quot;&quot;&quot;')            # note: added 02-20-2015
-		
-	return <%	
-	
-{**{source_variable}**}
 
-%>.format( source_variable = source ).htmlentities()   # when htmlentities not needed, then either remove the .htmlentities method, different function name with different code, (perhaps an override local function (w/same name) in website source, (though this override technique could cause confusion) ), or a htmlentities with a boolean arg,parameter version, etc.
+	return <%
+
+{**{source}**}
+
+%>.htmlentities()
 
 
 def exit_program(var):

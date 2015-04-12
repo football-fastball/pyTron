@@ -384,12 +384,12 @@ def source_code_from_file(file):
 	with open(file, 'r') as fp:   # or .cpp .php  etc.
 		source = fp.read()
 		source = source.replace('"""', '&quot;&quot;&quot;')            # note: added 02-20-2015
-		
-	return pyQuickTags(r"""	
-	
-{**{source_variable}**}
 
-""").initsupers(locals(),globals()).format( source_variable = source ).htmlentities()   # when htmlentities not needed, then either remove the .htmlentities method, different function name with different code, (perhaps an override local function (w/same name) in website source, (though this override technique could cause confusion) ), or a htmlentities with a boolean arg,parameter version, etc.
+	return pyQuickTags(r"""
+
+{**{source}**}
+
+""").initsupers(locals(),globals()).htmlentities()
 
 
 def exit_program(var):
@@ -982,15 +982,9 @@ import sys
 
 # INCLUDES TO BE PLACED HERE
 file_to_include = 'include.py'
-# including this way due to execfile does not including a file within a def,function as I expected
-#execfile(include_quick_tags_file(file_to_include))	# this functin used to include each python file with quick tags		 
-
-# NOTE: include section of source code with two entries due to workaround needed for execfile def,function
-#execfile(include_quick_tags_file(file_to_include))
+#execfile(include_quick_tags_file(file_to_include)) # including this way due to execfile does not include file from within a def,function
 
 
-
-		
 def source_code():    # note, this is to display whatever source code is within this function
 	
 	return pyQuickTags(r"""
@@ -1020,29 +1014,20 @@ and more of the website too
 	
 def top_content():
     
-	print_wwwlog( '''I am at " the top " content''' ) # NOTE: better to use triple single quotes , best to put a space before and after a triple quoted string (though not necessary for triple SINGLE quotes)
-	                                                  # (the open and close quick tags (< % % > with no spaces) to denote a 
-                                                      # triple double quoted string ONLY for return and assignment statements at this time) 
-                                                      # due to a space needed before closing parenthesis 
-                                                      # when using triple DOUBLE quotes (no restriction with triple SINGLE quotes by you, the programmer)
-	# at this time, one or no spaces between open parenthesis and open quick tag (no resriction on the close python quick tag as far as spaces around it)
+	print_wwwlog( pyQuickTags(r""" top content string """).initsupers(locals(),globals()) )
+	
 	print_wwwlog ( pyQuickTags(r""" example of new feature using quick tags between parenthesis """).initsupers(locals(),globals()) )
 	
 	return ' pyThor    @    www.pyThor.us '
 	
 def mid_content():
 
-	print_wwwlog( pyQuickTags(r""" I am  at  '''''''{}{}{}{} {{{{ }}}} the middle content \a\1\2\3\4\5\6\7\8\9\b\f\v\r\n\t\0\x0B
-	
-	
-I have denoted newlines within a raw string , sent to the web browser that also interprets as newlines
-And saving the file also is fine.
+	print_wwwlog( pyQuickTags(r""" middle content string 
 
 <br>
 <br>
 hello world  (but html characters are not interpreted this way)
-""").initsupers(locals(),globals())    )  # TWO SMALL CASES TO ESCAPE WITH RAW STRING LITERALS, a backslash before a single quote or double quote 
-          # (depending what are the outer quotes) and if the intent is to have a backslash at the end of a string, need two of them
+""").initsupers(locals(),globals())    )
 
 	return pyQuickTags(r"""
 	 
@@ -1053,7 +1038,7 @@ hello world  (but html characters are not interpreted this way)
 def end_content():
 	return 'footer'
 	
-# in the case not transferring data from php using multiple domains, simply revert to a previous version, commit 
+ 
 def domain_name(s):   
 	if(s == 'A'):
 		return 'us'
@@ -1184,8 +1169,8 @@ While still compatible with being able to use python format variables,
 
 </pre>
 
-""").initsupers(locals(),globals()).format (   #  %:)>    # UNCOMMENT POINT *A* (uncomment the FIRST comment hash tag for the remove unicode operation   # the arbitrary find string is exactly this 20 characters long, quick workaround to subtract a parenthesis keyword operator # hap face keyword to rid a frown ( removes a close parenthesis ) (an arbitrary keyword created to remove one text character)
-	# variables used
+""").initsupers(locals(),globals()).format (  # variables used
+
 	top_content_var = top_content(),
 	mid_content_var = mid_content(),
 	end_content_var = end_content(),
