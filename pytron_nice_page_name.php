@@ -38,17 +38,17 @@ $js_rs_folder_always = 'js'        ; // when '' therefore not using, or optional
 $css_per_page_folder_using   = true; // when false, perhaps use a file using   note: just the folder is created
 $js_rs_per_page_folder_using = true; // javascript rapydscript                 ...
 
-$css_per_page_file_using = true;     // when  css_per_page_folder_using    is set to true, then this should be false
-$js_per_page_file_using  = true;     // when  js_rs_per_page_folder_using  is set to true, then this should be false
-$rs_per_page_file_using  = true;     // when  js_rs_per_page_folder_using  is set to true, then this should be false
+$css_per_page_file_using = false;     // when  css_per_page_folder_using    is set to true, then this should be false
+$js_per_page_file_using  = false;     // when  js_rs_per_page_folder_using  is set to true, then this should be false
+$rs_per_page_file_using  = false;     // when  js_rs_per_page_folder_using  is set to true, then this should be false
 
-// when the three previous choices are false, then just a file in the following directories by the same name as the file
+// when the three previous choices are false, then just the following directories by the same name as the file from   *_per_page_folder_using   being set to true
 $include_folder = 'pyinclude/'  ;
 $css_folder     = 'pycss/'      ;
 $js_rs_folder   = 'pyjs_rs/'    ;
 // folders will be same name as filename within /pycss  or /pyjs_rs
 // simply include any css or js within those folders
-//  
+// when any of these three are set to '' empty string then the folders are not created
    
 $compiled_folder = 'COMPILED/'          ;	// MUST INCLUDE TRAILING backslash or forwardslash
 											// use either '' (that is empty string) or some_directory/   (not forward slash by itself, i.e.,  '/' )
@@ -1440,10 +1440,8 @@ def findtags(open, close, s):
 def make_tuples(s):		# for direct format variables using python quick tags {**{  }**}
 
 	fv = []
-
 	start = 0
 	pos   = 0  # or idx
-
 	while (1):
 
 		pos = s.find( '{**{', pos )
