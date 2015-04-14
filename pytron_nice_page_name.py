@@ -10,17 +10,21 @@ import sys
 #                                                   the compiled version is in the file  front_compiled.py
 #                                                   for review
 
-#  1)     python quick tags  <%  %>
-#  2)                              .htmlentities()   on the python quick tags          (to display source code) (note to wrap your format variable in pre tags for newlines work ok)
+#  1)     python quick tags  <%         %>
+#  2)     .htmlentities()   on the python quick tags          (to display source code) 
+#         (note to wrap your format variable in pre tags for newlines work ok)
 
-#  3)     source_code_from_file(file)                # file is the filename of the source code you would like to display
+#  3)     direct local or global variables with pyThor variable access syntax
+#         <% python quick tag string can {**{direct_access_variable_local_or_global}**} %>
 
-#  4)     use of superglobal variables from PHP in the form of pySERVER,pyGET,pyPOST,pyFILES as accessed in PHP
+#  4)     source_code_from_file(file)                # file is the filename of the source code you would like to display
+
+#  5)     use of superglobal variables from PHP in the form of pySERVER,pyGET,pyPOST,pyFILES as accessed in PHP
 #         Though recommended for convenience is to use the name of the variable that is global 
 #         e.g.,  Recommended use  DOCUMENT_ROOT  this is a global variable, instead of pySERVER['DOCUMENT_ROOT'], and so on (to access other PHP superglobal variables)
 #         Please note that the keyword global must be used to access the superglobal variable within any function or method that you intend to use the variable.
 
-#  5)     print_wwwlog(any_text_to_print_to_console_log_string_or_variable_etc)    # prints to brower's console log
+#  6)     print_wwwlog(any_string_text_to_print_to_console_log_string_or_variable_etc)    # prints to brower's console log
 
 # Note:  The variable   ensure  is set to True inititally, this can be set to False for a slight speed increase in the  simple_preprocessor_pyThor_features_txt.py  file ) ( also note: python allows to overwrite functions by simply making a function by the same name in this file as is defined in the simple_preprocessor_pyThor_features_txt.py file, though not recommended)
 
@@ -113,7 +117,6 @@ echo ('   {**{width}**}, {**{height}**}  ');
 %>
 
 
-
 global direct_global_var
 
 def output(name):
@@ -165,7 +168,7 @@ jQuery.getScript("first.js", function() {
 
 <br>{**{testing_output}**}<br>
 <div id="container">
-pytron_nice_page_name.php?pythorinfo
+
 <div id="top">{**{top_content_var}**}</div>
 
 <div id="mid">{**{mid_content_var}**}  <br>  <pre>{**{features}**}</pre>   </div>
@@ -264,8 +267,8 @@ While still compatible with being able to use python format variables,
 	code_init = <%
 $name = 'Stan Switaj';
  
-$fruits = array("banana", "apple", "strawberry", "pineaple");
- 
+$fruits = array("oranges", "apples", "strawberry", "pineapple", "kiwi");
+
 $user = new stdClass;
 $user->name = 'Hello 123.00 \\a\\1\\2\\3\\4\\5\\6\\7\\8\\9\\b\\f\\v\\r\\n\\t\\0\\x0B ';
 $user->desig = "CEO";
@@ -279,21 +282,8 @@ logConsole('$user object', $user, true);
 
 	# Written to print to the console log of a web browser
 	s = (code_init + "\n" + console_log_function()  )
-	
-	# For convenience I've included it in the following write statement anyway (to get the exact equivalent to the PHP source code string)
-	# The next line is optional to the OUTPUT to Web (i.e., it will not affect the display OUTPUT to web 
-	# It's just to inspect and review the string by writing it to a file)
-	s = s.replace("#\\'#", "#'#").replace('#\\"\\"#', '#""#').replace("#\\'\\'#", "#''#") # comment this line out to view the exact string that gets OUTPUT to the web
-	
+
 	# TO OUTPUT to web
 	print php(  s   )
-
-	
-#   notes:
-#   https://sarfraznawaz.wordpress.com/2012/01/05/outputting-php-to-browser-console/
-#   http://stackoverflow.com/questions/843277/how-do-i-check-if-a-variable-exists-in-python same as
-#   to test variable existence http://stackoverflow.com/a/843293  otherwise .ini for initial options
-#   nice unicode description: https://greeennotebook.wordpress.com/2014/05/24/character-sets-and-unicode-in-python/
-
 
 

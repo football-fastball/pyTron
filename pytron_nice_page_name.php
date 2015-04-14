@@ -135,11 +135,6 @@ foreach ($array2 as $key => $value) { echo "$key = $value\n<br>"; }
 //foreach($arr2 as $item){ print 'var='.$item.'<br>'; }
 
 
-
-
-
-
-
 // When verified that icheck_run_all are ok, then be sure that the variables corresponding to functions are still called
 // Note the following variables must be inititalized by functions (uncomment the next three lines then if required modify code as required,preferred):
 
@@ -206,7 +201,6 @@ function factored_getcwd() {
 	
 	$var =  substr(   b2f( getcwd() ) ,  strlen(    gets_document_root_with_trailing_fs()  )  ) . '/' ; // removes the document root (and the trailing slash) from cwd
 	return $var;
-
 }
 
 function within_project_folder_check() {
@@ -247,7 +241,6 @@ function adds_trailing_fowardslash_when_not_cwd_count($arr, $include_cwd_warning
 	return $count;
 }
 
-
 function backslash_conversions_count($arr){
 	$count = 0;
 	foreach($arr as $value){
@@ -277,7 +270,6 @@ function cwd_varieties($arr){
 	return $count;
 }
 
-
 function double_forwardslash_warning_count($arr){
 	print '<br>';
 	$count = 0;
@@ -288,11 +280,8 @@ function double_forwardslash_warning_count($arr){
 	return $count;
 }
 
-
-
 function gets_document_root_with_trailing_fs(){ // ensures,guarentees trailing forward slash
 
-	
 		//echo 'document root=' . $_SERVER["DOCUMENT_ROOT"] . '<br>';
 		//echo 'context document root=' . $_SERVER["CONTEXT_DOCUMENT_ROOT"] . '<br>';
 
@@ -500,9 +489,6 @@ function get_string_tag_to_tag($s, $opentag, $closetag=''){
 
 
 
-
-
-
 $base_name_without_extension = without_file_extension(basename(__FILE__));
 $source   = $base_name_without_extension . '.py';
 $compiled = $base_name_without_extension . '_compiled.py';
@@ -525,7 +511,6 @@ if (not($done) ) {
 	}
 
 
-
 	$u = get_string_tag_to_tag($s, 	'#_START_PRE_PROCESSOR.PY_WRITE_OUTPUT_#',
 					'#_END_PRE_PROCESSOR.PY_WRITE_OUTPUT_#');
 	
@@ -536,9 +521,6 @@ if (not($done) ) {
 	}
 
 
-
-	
-	
 	$v = get_string_tag_to_tag($s, 	'#_START_PRE_PYTHOR_FEATURES.PY_WRITE_OUTPUT_#',
 					'#_END_PRE_PYTHOR_FEATURES.PY_WRITE_OUTPUT_#');
 	
@@ -600,8 +582,6 @@ if (not($done) ) {
 }
 
 
-	
-
 	// previously was defining flex_folders and sources_magic_directory here though now near top for integrity check
 	// and therefore the # update-fix: 2015.02.17 in the function all_folders_after_project_root_until_index now commented out is instead done by the integrity check (a bit better imo)
 
@@ -619,12 +599,6 @@ if (not($done) ) {
 	print 'source=' . $source . '<br>';
 	print 'sources_magic_directory_compiled=' . $sources_magic_directory_compiled . '<br>';
 
-	
-	
-
-
-	
-	
 	
 	
 function strToHex($string){ $hex = ''; for($i=0; $i < strlen($string); $i++){$hex .= sprintf( "%02x", ord($string[$i]));} return $hex; }
@@ -740,17 +714,21 @@ import sys
 #                                                   the compiled version is in the file  front_compiled.py
 #                                                   for review
 
-#  1)     python quick tags  <%  %>
-#  2)                              .htmlentities()   on the python quick tags          (to display source code) (note to wrap your format variable in pre tags for newlines work ok)
+#  1)     python quick tags  <%         %>
+#  2)     .htmlentities()   on the python quick tags          (to display source code) 
+#         (note to wrap your format variable in pre tags for newlines work ok)
 
-#  3)     source_code_from_file(file)                # file is the filename of the source code you would like to display
+#  3)     direct local or global variables with pyThor variable access syntax
+#         <% python quick tag string can {**{direct_access_variable_local_or_global}**} %>
 
-#  4)     use of superglobal variables from PHP in the form of pySERVER,pyGET,pyPOST,pyFILES as accessed in PHP
+#  4)     source_code_from_file(file)                # file is the filename of the source code you would like to display
+
+#  5)     use of superglobal variables from PHP in the form of pySERVER,pyGET,pyPOST,pyFILES as accessed in PHP
 #         Though recommended for convenience is to use the name of the variable that is global 
 #         e.g.,  Recommended use  DOCUMENT_ROOT  this is a global variable, instead of pySERVER['DOCUMENT_ROOT'], and so on (to access other PHP superglobal variables)
 #         Please note that the keyword global must be used to access the superglobal variable within any function or method that you intend to use the variable.
 
-#  5)     print_wwwlog(any_text_to_print_to_console_log_string_or_variable_etc)    # prints to brower's console log
+#  6)     print_wwwlog(any_string_text_to_print_to_console_log_string_or_variable_etc)    # prints to brower's console log
 
 # Note:  The variable   ensure  is set to True inititally, this can be set to False for a slight speed increase in the  simple_preprocessor_pyThor_features_txt.py  file ) ( also note: python allows to overwrite functions by simply making a function by the same name in this file as is defined in the simple_preprocessor_pyThor_features_txt.py file, though not recommended)
 
@@ -841,7 +819,6 @@ code = <%
 echo ('   {**{width}**}, {**{height}**}  ');
 
 %>
-
 
 
 global direct_global_var
@@ -994,8 +971,8 @@ While still compatible with being able to use python format variables,
 	code_init = <%
 $name = 'Stan Switaj';
  
-$fruits = array("banana", "apple", "strawberry", "pineaple");
- 
+$fruits = array("oranges", "apples", "strawberry", "pineapple", "kiwi");
+
 $user = new stdClass;
 $user->name = 'Hello 123.00 \\a\\1\\2\\3\\4\\5\\6\\7\\8\\9\\b\\f\\v\\r\\n\\t\\0\\x0B ';
 $user->desig = "CEO";
@@ -1009,22 +986,9 @@ logConsole('$user object', $user, true);
 
 	# Written to print to the console log of a web browser
 	s = (code_init + "\n" + console_log_function()  )
-	
-	# For convenience I've included it in the following write statement anyway (to get the exact equivalent to the PHP source code string)
-	# The next line is optional to the OUTPUT to Web (i.e., it will not affect the display OUTPUT to web 
-	# It's just to inspect and review the string by writing it to a file)
-	s = s.replace("#\\'#", "#'#").replace('#\\"\\"#', '#""#').replace("#\\'\\'#", "#''#") # comment this line out to view the exact string that gets OUTPUT to the web
-	
+
 	# TO OUTPUT to web
 	print php(  s   )
-
-	
-#   notes:
-#   https://sarfraznawaz.wordpress.com/2012/01/05/outputting-php-to-browser-console/
-#   http://stackoverflow.com/questions/843277/how-do-i-check-if-a-variable-exists-in-python same as
-#   to test variable existence http://stackoverflow.com/a/843293  otherwise .ini for initial options
-#   nice unicode description: https://greeennotebook.wordpress.com/2014/05/24/character-sets-and-unicode-in-python/
-
 
 
 # END SOURCE CODE OF PY PAGE OUTPUT #
@@ -1488,7 +1452,6 @@ class pyQuickTags(str):
 	def __init__(self, v):        # optional
 		self.str_fv = Str_fv(v)
 	
-	
 	def format(self, *args, **kwargs):
 		
 		opentag=''
@@ -1595,19 +1558,18 @@ def console_log_function():
           $type = ($data || gettype($data)) ? 'Type: ' . gettype($data) : '';
  
           if ($jsEval && (is_array($data) || is_object($data))) {
-               $data = 'eval(' . preg_replace( '#[\\a\\1\\2\\3\\4\\5\\6\\7\\8\\9\\b\\f\\v\\r\\n\\t\\0\\x0B]+#', '', json_encode($data)) . ')';
                $isevaled = true;
           }
-          else {
-               $data = json_encode($data);
-          }
-          # sanitalize
-		  $data = $data ? $data : '';
-          $search_array = array("#\\'#", '#\\"\\"#', "#\\'\\'#", "#\\n#", "#\\r\\n#");
-          $replace_array = array('"', '', '', '\\\\n', '\\\\n');
-          $data = preg_replace($search_array,  $replace_array, $data);
+          $data = json_encode($data);
+
+          # Sanitizes
+          $data = $data ? $data : '';
+          $search_array    = array( '\"\"', "''", "\\r\\n" );
+          $replacing_array = array( ''    , ''  , "\\n" );
+          $data = str_replace($search_array, $replacing_array, $data);
           $data = ltrim(rtrim($data, '"'), '"');
           $data = $isevaled ? $data : ($data[0] === "'") ? $data : "'" . $data . "'";
+
 $js = <<<JSCODE
 
 <script>
@@ -1635,13 +1597,12 @@ $js = <<<JSCODE
      console.log('------------------------------------------');
      console.log('$type');
      console.log(hex2asc($data));
-
 </script>
 
 JSCODE;
         echo $js;
      } # end logConsole
-%>		
+%>
 
 
 # compiler functions
@@ -1660,11 +1621,6 @@ def exists(arg1, object=''):   # an interesting function   2 argument defines th
 		if arg1 in object:
 			#    when_true                   when_false
 			return True if arg1 in object else False
-			#
-			# if arg1 in object:
-			#	return True
-			# else:
-			#	return False
 	
 def file_exists(path):
 	return os.path.isfile(path)
@@ -1693,8 +1649,6 @@ def compile_include_quick_tags(file):
 	
 	print( 'INCLUDING THIS FILE(' + compiled + ')' )
 	return compiled # run pre_processor on it, with file being the source and  it as the dest
-		
-	# any includes done here to evaluate one file format variable, Q. can I include in a def,function
 	
 	
 def include_quick_tags_file(source):
@@ -1760,9 +1714,6 @@ def read_superglobalvariable_file(file):
 	
 	with open(file, 'r') as fp:
 		arr = fp.read().splitlines()
-		#arr[1] = '' if (arr[1]=='[]') else arr[1] #sanitizes, otherwise additional or to a function...
-		#arr[2] = '' if (arr[2]=='[]') else arr[2] #...
-		#arr[3] = '' if (arr[3]=='[]') else arr[3] #...		
 	return ( arr[0], arr[1], arr[2], arr[3] )
 
 	
@@ -2120,13 +2071,8 @@ def create_superglobals(args):
 				HTTP_COOKIE                      = ''
 				pySERVER['HTTP_COOKIE']          = ''
 
-				
-def display_pythorinfo():
 
-	#global pySERVER      # only when editing...
-	#global pyGET		  #...
-	#global pyGET		  #...
-	#global pyFILES		  #...
+def display_pythorinfo():
 	
 	out=''
  	
@@ -2138,7 +2084,6 @@ def display_pythorinfo():
 
 	out += <% 
 		<h1>Apache Envionment Variables </h1>
-	
 		<table border="1">
 	%>	
 
@@ -2271,7 +2216,6 @@ def get_fullsource(comments = True, pretags=False): # True initially
 	
 	out += '*--END OF FULL SOURCE--*'.replace(' ', '_')
 	
-	
 	return replace_when_yes( pyQuickTags(out).htmlentities(), salted_opentag='*openpre-*'+salt, salted_closetag='*closepre-*'+salt, bool_when=pretags, salt_flavor = salt )
 
 
@@ -2305,7 +2249,6 @@ def print_args(s, intro=''):		# to view the arguments that are sent to PyThor (f
 
 if __name__ == "__main__":  # in the case not transferring data from php, then simply revert to a previous version, commit
 	
-	
 	print 'pyThor (pyThor,server-side) (rapydscript, python client-side javascript)'
 
 	create_superglobals(sys.argv)
@@ -2316,7 +2259,6 @@ if __name__ == "__main__":  # in the case not transferring data from php, then s
 		
 	output(name=sys.argv[1])
 
-	
 #_MAIN_PROGRAM_CLOSE_TAG_#
 # DO NOT EDIT THE TEXT ON THE PREVIOUS LINE, this too is used to automatically generate _compiled.py source code #
 
@@ -2324,6 +2266,7 @@ if __name__ == "__main__":  # in the case not transferring data from php, then s
 
 # DO NOT EDIT THE TEXT ON THE NEXT LINE, this is used to automatically generate _compiled.py source code #
 #_FEATURES_LIST_OPEN_TAG_#
+
 Features List of PyThor
 
 1. python quick tags <% %> (This is a triple double quoted string - TDQ )
@@ -2331,19 +2274,22 @@ Features List of PyThor
 2. There is the feature to use of   format variables on the python quick tag <% %>
 e.g.,   <%  {**{variable_for_you}**}}  %>.format( variable_for_you = 'hello world' )
 
-3. There is the feature to use of   .htmlentities method on the python quick tags <% %>
+3. There is now direct variable interpolation for strings from local variables within a function and global variables.   
+   Therefore strings can access variables without the .format method with the pyThor distinct variable accessor syntax of 
+e.g.,  <% python quick tag string has {**{direct_access_variable_local_or_global}**} %>
+   
+4. There is the feature to use of   .htmlentities method on the python quick tags <% %>
 e.g.,   <%  this string will be converted to its htmlentities form %>.htmlentities()
 
-4. There is the feature to access superglobal variables that exist as they do in PHP
+5. There is the feature to access superglobal variables that exist as they do in PHP
    These variables have the same name as their PHP equivalent.
-   Note that the keyword global must be used to access the superglobal variable within any function or method
-   that you intend to use the variable.
+   These superglobal variables are also called convenience variables and are accessible within any function or method
+   that you intend to use the variable.  The dict objects of pySERVER, pyGET, pyPOST, and pyFILES can also be accessed.
 
-5. There is the feature to print text to the web browser console    # prints to brower's console log
+6. There is the feature to print text to the web browser console    # prints to brower's console log
 
-   print_wwwlog(any_text_to_print_to_console_log_string_or_variable_etc)
-
-
+   print_wwwlog(any_string_text_to_print_to_console_log_string_or_variable_etc)
+   
 #_FEATURES_LIST_CLOSE_TAG_#
 # DO NOT EDIT THE TEXT ON THE PREVIOUS LINE, this is used to automatically generate _compiled.py source code #
 
