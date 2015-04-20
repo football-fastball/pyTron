@@ -1,4 +1,5 @@
-
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 
 
@@ -1149,7 +1150,8 @@ While still compatible with being able to use python format variables,
 </pre>
 
 </pre>
-
+unicode display: Chinese , Japanese - testing3, expected<br>
+入口   ,  ようこそ   <br>
 """).initsupers(locals(),globals()).format (  # variables used
 
 	top_content_var = top_content(),

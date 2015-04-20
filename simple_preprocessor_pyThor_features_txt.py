@@ -10,7 +10,8 @@
 
 
 # DO NOT EDIT THE TEXT ON THE FOLLOWING LINE, used to automatically generate _compiled.py source code #
-#_PYTHON_QUICK_TAGS_FEATURES_OPEN_TAG_#
+#_PYTHON_QUICK_TAGS_FEATURES_OPEN_TAG_##!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 
 

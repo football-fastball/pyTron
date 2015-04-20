@@ -933,7 +933,8 @@ While still compatible with being able to use python format variables,
 </pre>
 
 </pre>
-
+unicode display: Chinese , Japanese - testing3, expected<br>
+入口   ,  ようこそ   <br>
 %>.format (  # variables used
 
 	top_content_var = top_content(),
@@ -1315,7 +1316,8 @@ if __name__ == "__main__":  # in the case not transferring data from php, then s
 
 
 # DO NOT EDIT THE TEXT ON THE FOLLOWING LINE, used to automatically generate _compiled.py source code #
-#_PYTHON_QUICK_TAGS_FEATURES_OPEN_TAG_#
+#_PYTHON_QUICK_TAGS_FEATURES_OPEN_TAG_##!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 
 
