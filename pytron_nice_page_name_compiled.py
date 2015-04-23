@@ -1039,6 +1039,17 @@ echo ('   {**{width}**}, {**{height}**}  ');
 
 """).initsupers(locals(),globals())
 
+def view_source_as():
+	return """<a href="{**{pagesourcelink}**}">click to view pyThor page source</a> <br>  
+<pre style="display:inline">{**{pagesource}**}</pre>
+<!-- similar to view source as feature of web browsers -->  
+
+<a href="{**{fullsourcelink}**}">view full page source</a> <br>
+<pre style="display:inline">{**{fullsource}**}</pre>
+
+<a href="{**{pythorinfolink}**}">pyThorInfo</a> {**{pyThorinfo}**}  
+<!-- Display pyThor environment by a url get (variable) -->"""
+
 
 global direct_global_var
 
@@ -1076,16 +1087,7 @@ jQuery.getScript("first.js", function() {
 """).initsupers(locals(),globals()) + pyQuickTags(r""" 'hello world<br> what is around there' """).initsupers(locals(),globals()).htmlentities() + pyQuickTags(r"""
  {**{direct_local_var}**}  {**{local_var2}**}  {**{direct_global_var}**} {**{int_var}**} {**{float_var}**}
 <br>
-
-<a href="{**{pagesourcelink}**}">click to view pyThor page source</a> <br>  
-<pre style="display:inline">{**{pagesource}**}</pre>
-<!-- similar to view source as feature of web browsers -->  
-
-<a href="{**{fullsourcelink}**}">view full page source</a> <br>
-<pre style="display:inline">{**{fullsource}**}</pre>
-
-<a href="{**{pythorinfolink}**}">pyThorInfo</a> {**{pyThorinfo}**}  
-<!-- Display pyThor environment by a url get (variable) -->
+{**{viewsource}**}
 
 <br>{**{testing_output}**}<br>
 <div id="container">
@@ -1152,7 +1154,8 @@ While still compatible with being able to use python format variables,
 </pre>
 unicode display: Chinese , Japanese - testing3, expected<br>
 入口   ,  ようこそ   <br>
-""").initsupers(locals(),globals()).format (  # variables used
+
+""").initsupers(locals(),globals()).format(viewsource = view_source_as()).format(  # variables used
 
 	top_content_var = top_content(),
 	mid_content_var = mid_content(),
